@@ -2,6 +2,7 @@ package mindustry.ai.types;
 
 import arc.Core;
 import arc.util.Timer;
+import arc.math.geom.*;
 import mindustry.*;
 import mindustry.ai.*;
 import mindustry.entities.*;
@@ -10,7 +11,13 @@ import mindustry.game.Team;
 import mindustry.gen.*;
 import mindustry.world.Tile;
 import mindustry.world.blocks.storage.CoreBlock;
+import mindustry.world.*;
+import mindustry.world.blocks.distribution.*;
+import mindustry.world.blocks.liquid.*;
+import mindustry.world.blocks.storage.*;
 import mindustry.world.meta.*;
+
+import static mindustry.Vars.*;
 
 public class SuicideAI extends GroundAI{
     static boolean blockedByBlock;
@@ -51,14 +58,17 @@ public class SuicideAI extends GroundAI{
 
                 //raycast for target
                 boolean blocked = Vars.world.raycast(unit.tileX(), unit.tileY(), target.tileX(), target.tileY(), (x, y) -> {
-                    Tile tile = Vars.world.tile(x, y);
-                    if(tile != null && tile.build == target) return false;
-                    if(tile != null && tile.build != null && tile.build.team != unit.team()){
-                        blockedByBlock = true;
-                        return true;
-                    }else{
-                        return tile == null || tile.solid();
+                    for(Point2 p : Geometry.d4c){
+                        Tile tile = Vars.world.tile(x + p.x, y + p.y);
+                        if(tile != null && tile.build == target) return false;
+                        if(tile != null && tile.build != null && tile.build.team != unit.team()){
+                            blockedByBlock = true;
+                            return true;
+                        }else{
+                            return tile == null || tile.solid();
+                        }
                     }
+                    return false;
                 });
 
                 //shoot when there's an enemy block in the way
@@ -83,8 +93,20 @@ public class SuicideAI extends GroundAI{
                 if(target != null && !unit.within(target, 70f)){
                     pathfind(Pathfinder.fieldRally);
                 }
-            }else if(command() == UnitCommand.attack && core != null){
-                pathfind(Pathfinder.fieldCore);
+            }else if(command() == UnitCommand.attack){
+                boolean move = true;
+
+                //stop moving toward the drop zone if applicable
+                if(core == null && state.rules.waves && unit.team == state.rules.defaultTeam){
+                    Tile spawner = getClosestSpawner();
+                    if(spawner != null && unit.within(spawner, state.rules.dropZoneRadius + 120f)){
+                        move = false;
+                    }
+                }
+
+                if(move){
+                    pathfind(Pathfinder.fieldCore);
+                }
             }
 
             if(unit.moving()) unit.lookAt(unit.vel().angle());

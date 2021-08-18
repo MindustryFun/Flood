@@ -1,9 +1,9 @@
 package mindustry.logic;
 
+import arc.*;
 import arc.math.geom.*;
 import arc.struct.*;
 import arc.util.*;
-import arc.util.noise.*;
 import mindustry.*;
 import mindustry.ai.types.*;
 import mindustry.content.*;
@@ -28,15 +28,13 @@ import static mindustry.Vars.*;
 public class LExecutor{
     public static final int maxInstructions = 1000;
 
-    //for noise operations
-    public static final Simplex noise = new Simplex();
-
     //special variables
     public static final int
     varCounter = 0,
     varTime = 1,
     varUnit = 2,
-    varThis = 3;
+    varThis = 3,
+    varTick = 4;
 
     public static final int
     maxGraphicsBuffer = 256,
@@ -61,6 +59,7 @@ public class LExecutor{
     public void runOnce(){
         //set time
         vars[varTime].numval = Time.millis();
+        vars[varTick].numval = Time.time;
 
         //reset to start
         if(vars[varCounter].numval >= instructions.length || vars[varCounter].numval < 0){
@@ -72,8 +71,8 @@ public class LExecutor{
         }
     }
 
-    public void load(String data, int maxInstructions){
-        load(LAssembler.assemble(data, maxInstructions));
+    public void load(String data){
+        load(LAssembler.assemble(data));
     }
 
     /** Loads with a specified assembler. Resets all variables. */
@@ -99,6 +98,10 @@ public class LExecutor{
 
     //region utility
 
+    private static boolean invalid(double d){
+        return Double.isNaN(d) || Double.isInfinite(d);
+    }
+
     public Var var(int index){
         //global constants have variable IDs < 0, and they are fetched from the global constants object after being negated
         return index < 0 ? constants.get(-index) : vars[index];
@@ -121,12 +124,12 @@ public class LExecutor{
 
     public double num(int index){
         Var v = var(index);
-        return v.isobj ? v.objval != null ? 1 : 0 : Double.isNaN(v.numval) || Double.isInfinite(v.numval) ? 0 : v.numval;
+        return v.isobj ? v.objval != null ? 1 : 0 : invalid(v.numval) ? 0 : v.numval;
     }
 
     public float numf(int index){
         Var v = var(index);
-        return v.isobj ? v.objval != null ? 1 : 0 : Double.isNaN(v.numval) || Double.isInfinite(v.numval) ? 0 : (float)v.numval;
+        return v.isobj ? v.objval != null ? 1 : 0 : invalid(v.numval) ? 0 : (float)v.numval;
     }
 
     public int numi(int index){
@@ -140,9 +143,14 @@ public class LExecutor{
     public void setnum(int index, double value){
         Var v = var(index);
         if(v.constant) return;
-        v.numval = Double.isNaN(value) || Double.isInfinite(value) ? 0 : value;
-        v.objval = null;
-        v.isobj = false;
+        if(invalid(value)){
+            v.objval = null;
+            v.isobj = true;
+        }else{
+            v.numval = value;
+            v.objval = null;
+            v.isobj = false;
+        }
     }
 
     public void setobj(int index, Object value){
@@ -327,17 +335,20 @@ public class LExecutor{
         @Nullable
         public static LogicAI checkLogicAI(LExecutor exec, Object unitObj){
             if(unitObj instanceof Unit unit && exec.obj(varUnit) == unit && unit.team == exec.team && !unit.isPlayer() && !(unit.controller() instanceof FormationAI)){
-                if(!(unit.controller() instanceof LogicAI)){
-                    unit.controller(new LogicAI());
-                    ((LogicAI)unit.controller()).controller = exec.building(varThis);
+                if(unit.controller() instanceof LogicAI la){
+                    la.controller = exec.building(varThis);
+                    return la;
+                }else{
+                    var la = new LogicAI();
+                    la.controller = exec.building(varThis);
 
+                    unit.controller(la);
                     //clear old state
                     unit.mineTile = null;
                     unit.clearBuilding();
 
-                    return (LogicAI)unit.controller();
+                    return la;
                 }
-                return (LogicAI)unit.controller();
             }
             return null;
         }
@@ -353,6 +364,9 @@ public class LExecutor{
                 float x1 = World.unconv(exec.numf(p1)), y1 = World.unconv(exec.numf(p2)), d1 = World.unconv(exec.numf(p3));
 
                 switch(type){
+                    case idle -> {
+                        ai.control = type;
+                    }
                     case move, stop, approach -> {
                         ai.control = type;
                         ai.moveX = x1;
@@ -437,7 +451,7 @@ public class LExecutor{
                         }
                     }
                     case build -> {
-                        if(unit.canBuild() && exec.obj(p3) instanceof Block block){
+                        if(state.rules.logicUnitBuild && unit.canBuild() && exec.obj(p3) instanceof Block block){
                             int x = World.toTile(x1 - block.offset/tilesize), y = World.toTile(y1 - block.offset/tilesize);
                             int rot = exec.numi(p4);
 
@@ -448,12 +462,14 @@ public class LExecutor{
                                 ai.plan.stuck = false;
                             }
 
+                            var conf = exec.obj(p5);
                             ai.plan.set(x, y, rot, block);
-                            ai.plan.config = exec.obj(p5) instanceof Content c ? c : null;
+                            ai.plan.config = conf instanceof Content c ? c : conf instanceof Building b ? b : null;
 
                             unit.clearBuilding();
+                            Tile tile = ai.plan.tile();
 
-                            if(ai.plan.tile() != null){
+                            if(tile != null && !(tile.block() == block && tile.build != null && tile.build.rotation == rot)){
                                 unit.updateBuilding = true;
                                 unit.addBuild(ai.plan);
                             }
@@ -477,7 +493,7 @@ public class LExecutor{
 
                         Building build = exec.building(p1);
                         int dropped = Math.min(unit.stack.amount, exec.numi(p2));
-                        if(build != null && build.isValid() && !(build.block instanceof CoreBlock) && dropped > 0 && unit.within(build, logicItemTransferRange + build.block.size * tilesize/2f)){
+                        if(build != null && build.team == unit.team && !(build.block instanceof CoreBlock) && build.isValid() && dropped > 0 && unit.within(build, logicItemTransferRange + build.block.size * tilesize/2f)){
                             int accepted = build.acceptStack(unit.item(), dropped, unit);
                             if(accepted > 0){
                                 Call.transferItemTo(unit, unit.item(), accepted, unit.x, unit.y, build);
@@ -491,7 +507,8 @@ public class LExecutor{
                         Building build = exec.building(p1);
                         int amount = exec.numi(p3);
 
-                        if(build != null && build.isValid() && !(build.block instanceof CoreBlock) && build.items != null && exec.obj(p2) instanceof Item item && unit.within(build, logicItemTransferRange + build.block.size * tilesize/2f)){
+                        if(build != null && build.team == unit.team && !(build.block instanceof CoreBlock) && build.isValid() && build.items != null &&
+                            exec.obj(p2) instanceof Item item && unit.within(build, logicItemTransferRange + build.block.size * tilesize/2f)){
                             int taken = Math.min(build.items.get(item), Math.min(amount, unit.maxAccepted(item)));
 
                             if(taken > 0){
@@ -511,7 +528,6 @@ public class LExecutor{
         public int target;
         public LAccess type = LAccess.enabled;
         public int p1, p2, p3, p4;
-        public Interval timer = new Interval(1);
 
         public ControlI(LAccess type, int target, int p1, int p2, int p3, int p4){
             this.type = type;
@@ -527,8 +543,8 @@ public class LExecutor{
         @Override
         public void run(LExecutor exec){
             Object obj = exec.obj(target);
-            if(obj instanceof Building b && b.team == exec.team && exec.linkIds.contains(b.id) && (type.cooldown <= 0 || timer.get(type.cooldown))){
-                if(type.isObj){
+            if(obj instanceof Building b && b.team == exec.team && exec.linkIds.contains(b.id)){
+                if(type.isObj && exec.var(p1).isobj){
                     b.control(type, exec.obj(p1), exec.num(p2), exec.num(p3), exec.num(p4));
                 }else{
                     b.control(type, exec.num(p1), exec.num(p2), exec.num(p3), exec.num(p4));
@@ -624,23 +640,28 @@ public class LExecutor{
             Object target = exec.obj(from);
             Object sense = exec.obj(type);
 
+            if(target == null && sense == LAccess.dead){
+                exec.setnum(to, 1);
+                return;
+            }
+
             //note that remote units/buildings can be sensed as well
             if(target instanceof Senseable se){
-                if(sense instanceof Content){
-                    exec.setnum(to, se.sense(((Content)sense)));
-                }else if(sense instanceof LAccess){
-                    Object objOut = se.senseObject((LAccess)sense);
+                if(sense instanceof Content co){
+                    exec.setnum(to, se.sense(co));
+                }else if(sense instanceof LAccess la){
+                    Object objOut = se.senseObject(la);
 
                     if(objOut == Senseable.noSensed){
                         //numeric output
-                        exec.setnum(to, se.sense((LAccess)sense));
+                        exec.setnum(to, se.sense(la));
                     }else{
                         //object output
                         exec.setobj(to, objOut);
                     }
                 }
             }else{
-                exec.setnum(to, 0);
+                exec.setobj(to, null);
             }
         }
     }
@@ -750,13 +771,12 @@ public class LExecutor{
             Var v = exec.var(to);
             Var f = exec.var(from);
 
-            //TODO error out when the from-value is a constant
             if(!v.constant){
                 if(f.isobj){
                     v.objval = f.objval;
                     v.isobj = true;
                 }else{
-                    v.numval = Double.isNaN(f.numval) || Double.isInfinite(f.numval) ? 0 : f.numval;
+                    v.numval = invalid(f.numval) ? 0 : f.numval;
                     v.isobj = false;
                 }
             }
@@ -778,14 +798,17 @@ public class LExecutor{
 
         @Override
         public void run(LExecutor exec){
-            if(op.unary){
+            if(op == LogicOp.strictEqual){
+                Var v = exec.var(a), v2 = exec.var(b);
+                exec.setnum(dest, v.isobj == v2.isobj && ((v.isobj && v.objval == v2.objval) || (!v.isobj && v.numval == v2.numval)) ? 1 : 0);
+            }else if(op.unary){
                 exec.setnum(dest, op.function1.get(exec.num(a)));
             }else{
                 Var va = exec.var(a);
                 Var vb = exec.var(b);
 
                 if(op.objFunction2 != null && va.isobj && vb.isobj){
-                    //use object function if provided, and one of the variables is an object
+                    //use object function if both are objects
                     exec.setnum(dest, op.objFunction2.get(exec.obj(a), exec.obj(b)));
                 }else{
                     //otherwise use the numeric function
@@ -841,8 +864,12 @@ public class LExecutor{
 
             //add graphics calls, cap graphics buffer size
             if(exec.graphicsBuffer.size < maxGraphicsBuffer){
-                exec.graphicsBuffer.add(DisplayCmd.get(type, exec.numi(x), exec.numi(y), num1, exec.numi(p2), exec.numi(p3), exec.numi(p4)));
+                exec.graphicsBuffer.add(DisplayCmd.get(type, packSign(exec.numi(x)), packSign(exec.numi(y)), packSign(num1), packSign(exec.numi(p2)), packSign(exec.numi(p3)), packSign(exec.numi(p4))));
             }
+        }
+
+        static int packSign(int value){
+            return (Math.abs(value) & 0b0111111111) | (value < 0 ? 0b1000000000 : 0);
         }
     }
 
@@ -897,6 +924,7 @@ public class LExecutor{
                     v.objval instanceof Content ? "[content]" :
                     v.objval instanceof Building build ? build.block.name :
                     v.objval instanceof Unit unit ? unit.type.name :
+                    v.objval instanceof Enum<?> e ? e.name() :
                     "[object]";
 
                 exec.textBuffer.append(strValue);
@@ -955,8 +983,10 @@ public class LExecutor{
                 Var vb = exec.var(compare);
                 boolean cmp;
 
-                if(op.objFunction != null && va.isobj && vb.isobj){
-                    //use object function if provided, and one of the variables is an object
+                if(op == ConditionOp.strictEqual){
+                    cmp = va.isobj == vb.isobj && ((va.isobj && va.objval == vb.objval) || (!va.isobj && va.numval == vb.numval));
+                }else if(op.objFunction != null && va.isobj && vb.isobj){
+                    //use object function if both are objects
                     cmp = op.objFunction.get(exec.obj(value), exec.obj(compare));
                 }else{
                     cmp = op.function.get(exec.num(value), exec.num(compare));
@@ -968,6 +998,58 @@ public class LExecutor{
             }
         }
     }
+
+    public static class WaitI implements LInstruction{
+        public int value;
+
+        public float curTime;
+        public double wait;
+        public long frameId;
+
+        public WaitI(int value){
+            this.value = value;
+        }
+
+        public WaitI(){
+
+        }
+
+        @Override
+        public void run(LExecutor exec){
+            if(curTime >= exec.num(value)){
+                curTime = 0f;
+            }else{
+                //skip back to self.
+                exec.var(varCounter).numval --;
+            }
+
+            if(Core.graphics.getFrameId() != frameId){
+                curTime += Time.delta / 60f;
+                frameId = Core.graphics.getFrameId();
+            }
+        }
+    }
+
+    public static class LookupI implements LInstruction{
+        public int dest;
+        public int from;
+        public ContentType type;
+
+        public LookupI(int dest, int from, ContentType type){
+            this.dest = dest;
+            this.from = from;
+            this.type = type;
+        }
+
+        public LookupI(){
+        }
+
+        @Override
+        public void run(LExecutor exec){
+            exec.setobj(dest, constants.lookupContent(type, exec.numi(from)));
+        }
+    }
+
 
     //endregion
 }

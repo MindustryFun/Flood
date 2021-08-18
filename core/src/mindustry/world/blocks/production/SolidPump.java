@@ -35,6 +35,8 @@ public class SolidPump extends Pump{
 
     @Override
     public void drawPlace(int x, int y, int rotation, boolean valid){
+        drawPotentialLinks(x, y);
+
         if(attribute != null){
             drawPlaceText(Core.bundle.formatFloat("bar.efficiency", Math.max(sumAttribute(attribute, x, y) / size / size + baseEfficiency, 0f) * 100 * percentSolid(x, y), 1), x, y, valid);
         }
@@ -46,7 +48,7 @@ public class SolidPump extends Pump{
         bars.add("efficiency", (SolidPumpBuild entity) -> new Bar(() -> Core.bundle.formatFloat("bar.pumpspeed",
         entity.lastPump / Time.delta * 60, 1),
         () -> Pal.ammo,
-        () -> entity.warmup));
+        () -> entity.warmup * entity.efficiency()));
     }
 
     @Override
@@ -87,7 +89,7 @@ public class SolidPump extends Pump{
         public void draw(){
             Draw.rect(region, x, y);
             Drawf.liquid(liquidRegion, x, y, liquids.total() / liquidCapacity, liquids.current().color);
-            Draw.rect(rotatorRegion, x, y, pumpTime * rotateSpeed);
+            Drawf.spinSprite(rotatorRegion, x, y, pumpTime * rotateSpeed);
             Draw.rect(topRegion, x, y);
         }
 
@@ -106,13 +108,13 @@ public class SolidPump extends Pump{
                 lastPump = maxPump;
                 warmup = Mathf.lerpDelta(warmup, 1f, 0.02f);
                 if(Mathf.chance(delta() * updateEffectChance))
-                    updateEffect.at(getX() + Mathf.range(size * 2f), getY() + Mathf.range(size * 2f));
+                    updateEffect.at(x + Mathf.range(size * 2f), y + Mathf.range(size * 2f));
             }else{
                 warmup = Mathf.lerpDelta(warmup, 0f, 0.02f);
                 lastPump = 0f;
             }
 
-            pumpTime += warmup * delta();
+            pumpTime += warmup * edelta();
 
             dumpLiquid(result);
         }

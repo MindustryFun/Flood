@@ -4,25 +4,39 @@ import arc.*;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
-import arc.math.geom.*;
+import arc.scene.style.*;
 import arc.util.*;
 import arc.util.io.*;
 import mindustry.*;
+import mindustry.core.*;
 import mindustry.entities.EntityCollisions.*;
 import mindustry.entities.*;
 import mindustry.game.EventType.*;
 import mindustry.gen.*;
-import mindustry.graphics.*;
-import mindustry.ui.*;
+
+import static mindustry.Vars.*;
 
 public class UnitPayload implements Payload{
-    public static final float deactiveDuration = 40f;
+    public static final float overlayDuration = 40f;
 
     public Unit unit;
-    public float deactiveTime = 0f;
+    public float overlayTime = 0f;
+    public @Nullable TextureRegion overlayRegion;
 
     public UnitPayload(Unit unit){
         this.unit = unit;
+    }
+
+    /** Flashes a red overlay region. */
+    public void showOverlay(TextureRegion icon){
+        overlayRegion = icon;
+        overlayTime = 1f;
+    }
+
+    /** Flashes a red overlay region. */
+    public void showOverlay(TextureRegionDrawable icon){
+        if(icon == null || headless) return;
+        showOverlay(icon.getRegion());
     }
 
     @Override
@@ -39,6 +53,16 @@ public class UnitPayload implements Payload{
     }
 
     @Override
+    public float x(){
+        return unit.x;
+    }
+
+    @Override
+    public float y(){
+        return unit.y;
+    }
+
+    @Override
     public float rotation(){
         return unit.rotation;
     }
@@ -50,22 +74,29 @@ public class UnitPayload implements Payload{
 
     @Override
     public boolean dump(){
+        //TODO should not happen
+        if(unit.type == null) return true;
+
         if(!Units.canCreate(unit.team, unit.type)){
-            deactiveTime = 1f;
+            overlayTime = 1f;
+            overlayRegion = null;
             return false;
         }
 
         //check if unit can be dumped here
         SolidPred solid = unit.solidity();
         if(solid != null){
-            int tx = unit.tileX(), ty = unit.tileY();
-            boolean nearEmpty = !solid.solid(tx, ty);
-            for(Point2 p : Geometry.d4){
-                nearEmpty |= !solid.solid(tx + p.x, ty + p.y);
-            }
+            Tmp.v1.trns(unit.rotation, 1f);
+
+            int tx = World.toTile(unit.x + Tmp.v1.x), ty = World.toTile(unit.y + Tmp.v1.y);
 
             //cannot dump on solid blocks
-            if(!nearEmpty) return false;
+            if(solid.solid(tx, ty)) return false;
+        }
+
+        //cannnot dump when there's a lot of overlap going on
+        if(!unit.type.flying && Units.count(unit.x, unit.y, unit.physicSize(), o -> o.isGrounded() && (o.type.allowLegStep == unit.type.allowLegStep)) > 0){
+            return false;
         }
 
         //no client dumping
@@ -81,25 +112,30 @@ public class UnitPayload implements Payload{
 
     @Override
     public void draw(){
-        Drawf.shadow(unit.x, unit.y, 20);
-        Draw.rect(unit.type.icon(Cicon.full), unit.x, unit.y, unit.rotation - 90);
+        //TODO should not happen
+        if(unit.type == null) return;
+
+        unit.type.drawSoftShadow(unit);
+        Draw.rect(unit.type.fullIcon, unit.x, unit.y, unit.rotation - 90);
+        unit.type.drawCell(unit);
 
         //draw warning
-        if(deactiveTime > 0){
+        if(overlayTime > 0){
+            var region = overlayRegion == null ? Icon.warning.getRegion() : overlayRegion;
             Draw.color(Color.scarlet);
-            Draw.alpha(0.8f * Interp.exp5Out.apply(deactiveTime));
+            Draw.alpha(0.8f * Interp.exp5Out.apply(overlayTime));
 
             float size = 8f;
-            Draw.rect(Icon.warning.getRegion(), unit.x, unit.y, size, size);
+            Draw.rect(region, unit.x, unit.y, size, size);
 
             Draw.reset();
 
-            deactiveTime = Math.max(deactiveTime - Time.delta/deactiveDuration, 0f);
+            overlayTime = Math.max(overlayTime - Time.delta/overlayDuration, 0f);
         }
     }
 
     @Override
-    public TextureRegion icon(Cicon icon){
-        return unit.type.icon(icon);
+    public TextureRegion icon(){
+        return unit.type.fullIcon;
     }
 }
