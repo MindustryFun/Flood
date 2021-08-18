@@ -1585,10 +1585,11 @@ public class Blocks implements ContentList{
 
             hasPower = true;
             size = 2;
-            force = 12f;
+            // force = 12f;
+            force = 0f;
             scaledForce = 6f;
             range = 240f;
-            damage = 0.3f;
+            damage = 3f;
             health = 160 * size * size;
             rotateSpeed = 10;
 
@@ -1651,7 +1652,7 @@ public class Blocks implements ContentList{
             consumes.powerCond(8f, (PointDefenseBuild b) -> b.target != null);
             size = 2;
             shootLength = 5f;
-            bulletDamage = 30f;
+            bulletDamage = 3f;
             reloadTime = 8f;
         }};
 
@@ -1699,14 +1700,14 @@ public class Blocks implements ContentList{
             ammo(
                 Items.titanium, new ShrapnelBulletType(){{
                     length = brange;
-                    damage = 66f;
+                    damage = 36f;
                     ammoMultiplier = 4f;
                     width = 17f;
                     reloadMultiplier = 1.3f;
                 }},
                 Items.thorium, new ShrapnelBulletType(){{
                     length = brange;
-                    damage = 105f;
+                    damage = 55f;
                     ammoMultiplier = 5f;
                     toColor = Pal.thoriumPink;
                     shootEffect = smokeEffect = Fx.thoriumShoot;
@@ -1778,7 +1779,7 @@ public class Blocks implements ContentList{
                     trailEffect = Fx.instTrail;
                     despawnEffect = Fx.instBomb;
                     trailSpacing = 20f;
-                    damage = 1350;
+                    damage = 10000;
                     buildingDamageMultiplier = 0.2f;
                     speed = brange;
                     hitShake = 6f;
