@@ -23,11 +23,9 @@ import mindustry.world.modules.*;
 import static mindustry.Vars.*;
 
 public class PowerNode extends PowerBlock{
-    protected static boolean returnValue = false;
     protected static BuildPlan otherReq;
-
-    protected final static ObjectSet<PowerGraph> graphs = new ObjectSet<>();
     protected static int returnInt = 0;
+    protected final static ObjectSet<PowerGraph> graphs = new ObjectSet<>();
 
     public @Load("laser") TextureRegion laser;
     public @Load("laser-end") TextureRegion laserEnd;
@@ -108,13 +106,13 @@ public class PowerNode extends PowerBlock{
         super.setBars();
         bars.add("power", entity -> new Bar(() ->
         Core.bundle.format("bar.powerbalance",
-            ((entity.power.graph.getPowerBalance() >= 0 ? "+" : "") + UI.formatAmount((int)(entity.power.graph.getPowerBalance() * 60)))),
+            ((entity.power.graph.getPowerBalance() >= 0 ? "+" : "") + UI.formatAmount((long)(entity.power.graph.getPowerBalance() * 60)))),
             () -> Pal.powerBar,
             () -> Mathf.clamp(entity.power.graph.getLastPowerProduced() / entity.power.graph.getLastPowerNeeded())));
 
         bars.add("batteries", entity -> new Bar(() ->
         Core.bundle.format("bar.powerstored",
-            (UI.formatAmount((int)entity.power.graph.getLastPowerStored())), UI.formatAmount((int)entity.power.graph.getLastCapacity())),
+            (UI.formatAmount((long)entity.power.graph.getLastPowerStored())), UI.formatAmount((long)entity.power.graph.getLastCapacity())),
             () -> Pal.powerBar,
             () -> Mathf.clamp(entity.power.graph.getLastPowerStored() / entity.power.graph.getLastCapacity())));
 
@@ -131,6 +129,13 @@ public class PowerNode extends PowerBlock{
 
         stats.add(Stat.powerRange, laserRange, StatUnit.blocks);
         stats.add(Stat.powerConnections, maxNodes, StatUnit.none);
+    }
+
+    @Override
+    public void init(){
+        super.init();
+
+        clipSize = Math.max(clipSize, laserRange * tilesize);
     }
 
     @Override
@@ -363,8 +368,7 @@ public class PowerNode extends PowerBlock{
         @Override
         public void dropped(){
             power.links.clear();
-            //create new power graph to manually unlink (this may be redundant)
-            new PowerGraph().add(this);
+            updatePowerGraph();
         }
 
         @Override
