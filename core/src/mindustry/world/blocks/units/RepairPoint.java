@@ -174,6 +174,7 @@ public class RepairPoint extends Block{
                 multiplier = liq.valid(this) ? 1f + liquids.current().heatCapacity * coolantMultiplier : 1f;
             }
 
+            target.damage(1);
             if(target != null && (target.dead() || target.dst(tile) - target.hitSize/2f > repairRadius || target.health() >= target.maxHealth())){
                 target = null;
             }
@@ -188,7 +189,8 @@ public class RepairPoint extends Block{
                 float angle = Angles.angle(x, y, target.x + offset.x, target.y + offset.y);
                 if(Angles.angleDist(angle, rotation) < 30f){
                     healed = true;
-                    target.heal(repairSpeed * strength * edelta() * multiplier);
+                    target.heal(1);
+                    target.apply(StatusEffects.overclock, repairSpeed);
                 }
                 rotation = Mathf.slerpDelta(rotation, angle, 0.5f * efficiency() * timeScale);
             }
@@ -197,7 +199,7 @@ public class RepairPoint extends Block{
 
             if(timer(timerTarget, 20)){
                 rect.setSize(repairRadius * 2).setCenter(x, y);
-                target = Units.closest(team, x, y, repairRadius, Unit::damaged);
+                target = Units.closest(team, x, y, repairRadius, f -> !f.hasEffect(StatusEffects.overclock));
             }
         }
 

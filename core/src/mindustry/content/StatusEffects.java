@@ -152,9 +152,8 @@ public class StatusEffects implements ContentList{
         overclock = new StatusEffect("overclock"){{
             color = Pal.accent;
             speedMultiplier = 1.15f;
-            damageMultiplier = 1.15f;
+            damageMultiplier = 2.0f;
             reloadMultiplier = 1.25f;
-            effectChance = 0.07f;
             effect = Fx.overclocked;
         }};
 
