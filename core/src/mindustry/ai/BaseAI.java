@@ -16,6 +16,7 @@ import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.defense.*;
 import mindustry.world.blocks.distribution.*;
+import mindustry.world.blocks.payloads.*;
 import mindustry.world.blocks.production.*;
 import mindustry.world.blocks.storage.*;
 import mindustry.world.blocks.storage.CoreBlock.*;
@@ -32,7 +33,6 @@ public class BaseAI{
     private static final Seq<Tile> tmpTiles = new Seq<>();
 
     private static int correct = 0, incorrect = 0;
-    private static boolean anyDrills;
 
     private int lastX, lastY, lastW, lastH;
     private boolean triedWalls, foundPath;
@@ -52,6 +52,7 @@ public class BaseAI{
     }
 
     public void update(){
+
         if(data.team.rules().aiCoreSpawn && timer.get(timerSpawn, 60 * 2.5f) && data.hasCore()){
             CoreBlock block = (CoreBlock)data.core().block;
             int coreUnits = Groups.unit.count(u -> u.team == data.team && u.type == block.unitType);
@@ -90,49 +91,51 @@ public class BaseAI{
             }else{
                 var field = pathfinder.getField(state.rules.waveTeam, Pathfinder.costGround, Pathfinder.fieldCore);
 
-                int[][] weights = field.weights;
-                for(int i = 0; i < pathStep; i++){
-                    int minCost = Integer.MAX_VALUE;
-                    int cx = calcTile.x, cy = calcTile.y;
-                    boolean foundAny = false;
-                    for(Point2 p : Geometry.d4){
-                        int nx = cx + p.x, ny = cy + p.y;
+                if(field.weights != null){
+                    int[][] weights = field.weights;
+                    for(int i = 0; i < pathStep; i++){
+                        int minCost = Integer.MAX_VALUE;
+                        int cx = calcTile.x, cy = calcTile.y;
+                        boolean foundAny = false;
+                        for(Point2 p : Geometry.d4){
+                            int nx = cx + p.x, ny = cy + p.y;
 
-                        Tile other = world.tile(nx, ny);
-                        if(other != null && weights[nx][ny] < minCost && weights[nx][ny] != -1){
-                            minCost = weights[nx][ny];
-                            calcTile = other;
-                            foundAny = true;
+                            Tile other = world.tile(nx, ny);
+                            if(other != null && weights[nx][ny] < minCost && weights[nx][ny] != -1){
+                                minCost = weights[nx][ny];
+                                calcTile = other;
+                                foundAny = true;
+                            }
                         }
+
+                        //didn't find anything, break out of loop, this will trigger a clear later
+                        if(!foundAny){
+                            calcCount = Integer.MAX_VALUE;
+                            break;
+                        }
+
+                        calcPath.add(calcTile.pos());
+                        for(Point2 p : Geometry.d8){
+                            calcPath.add(Point2.pack(p.x + calcTile.x, p.y + calcTile.y));
+                        }
+
+                        //found the end.
+                        if(calcTile.build instanceof CoreBuild b && b.team == state.rules.defaultTeam){
+                            //clean up calculations and flush results
+                            calculating = false;
+                            calcCount = 0;
+                            path.clear();
+                            path.addAll(calcPath);
+                            calcPath.clear();
+                            calcTile = null;
+                            totalCalcs ++;
+                            foundPath = true;
+
+                            break;
+                        }
+
+                        calcCount ++;
                     }
-
-                    //didn't find anything, break out of loop, this will trigger a clear later
-                    if(!foundAny){
-                        calcCount = Integer.MAX_VALUE;
-                        break;
-                    }
-
-                    calcPath.add(calcTile.pos());
-                    for(Point2 p : Geometry.d8){
-                        calcPath.add(Point2.pack(p.x + calcTile.x, p.y + calcTile.y));
-                    }
-
-                    //found the end.
-                    if(calcTile.build instanceof CoreBuild b && b.team == state.rules.defaultTeam){
-                        //clean up calculations and flush results
-                        calculating = false;
-                        calcCount = 0;
-                        path.clear();
-                        path.addAll(calcPath);
-                        calcPath.clear();
-                        calcTile = null;
-                        totalCalcs ++;
-                        foundPath = true;
-
-                        break;
-                    }
-
-                    calcCount ++;
                 }
             }
         }
@@ -209,6 +212,16 @@ public class BaseAI{
             }
             Tile wtile = world.tile(realX, realY);
 
+            if(tile.block instanceof PayloadConveyor || tile.block instanceof PayloadBlock){
+                //near a building
+                for(Point2 point : Edges.getEdges(tile.block.size)){
+                    var t = world.build(tile.x + point.x, tile.y + point.y);
+                    if(t != null){
+                        return false;
+                    }
+                }
+            }
+
             //may intersect AI path
             tmpTiles.clear();
             if(tile.block.solid && wtile != null && wtile.getLinkedTilesAs(tile.block, tmpTiles).contains(t -> path.contains(t.pos()))){
@@ -218,7 +231,7 @@ public class BaseAI{
 
         //make sure at least X% of resource requirements are met
         correct = incorrect = 0;
-        anyDrills = false;
+        boolean anyDrills = false;
 
         if(part.required instanceof Item){
             for(Stile tile : result.tiles){
@@ -279,7 +292,7 @@ public class BaseAI{
                     }
 
                     Tile o = world.tile(tile.x + p.x, tile.y + p.y);
-                    if(o != null && (o.block() instanceof PayloadAcceptor || o.block() instanceof PayloadConveyor)){
+                    if(o != null && (o.block() instanceof PayloadBlock || o.block() instanceof PayloadConveyor || o.block() instanceof ShockMine)){
                         continue outer;
                     }
 

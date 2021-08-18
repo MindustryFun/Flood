@@ -8,7 +8,6 @@ import arc.graphics.g2d.*;
 import arc.math.*;
 import arc.math.geom.*;
 import arc.scene.*;
-import arc.scene.event.*;
 import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
@@ -42,39 +41,44 @@ public class DesktopInput extends InputHandler{
     /** Selected build request for movement. */
     public @Nullable BuildPlan sreq;
     /** Whether player is currently deleting removal requests. */
-    public boolean deleting = false, wasBuilding = true, shouldShoot = false, panning = false;
+    public boolean deleting = false, shouldShoot = false, panning = false;
     /** Mouse pan speed. */
-    public float panScale = 0.005f, panSpeed = 4.5f, panBoostSpeed = 11f;
+    public float panScale = 0.005f, panSpeed = 4.5f, panBoostSpeed = 15f;
+    /** Delta time between consecutive clicks. */
+    public long selectMillis = 0;
+    /** Previously selected tile. */
+    public Tile prevSelected;
+
+    boolean showHint(){
+        return ui.hudfrag.shown && Core.settings.getBool("hints") && selectRequests.isEmpty() &&
+            (!isBuilding && !Core.settings.getBool("buildautopause") || player.unit().isBuilding() || !player.dead() && !player.unit().spawnedByCore());
+    }
 
     @Override
     public void buildUI(Group group){
-        //respawn hints
+        //building and respawn hints
         group.fill(t -> {
-            t.visible(() -> Core.settings.getBool("hints") && ui.hudfrag.shown && !player.dead() && !player.unit().spawnedByCore() && !(Core.settings.getBool("hints") && lastSchematic != null && !selectRequests.isEmpty()));
+            t.color.a = 0f;
+            t.visible(() -> (t.color.a = Mathf.lerpDelta(t.color.a, Mathf.num(showHint()), 0.15f)) > 0.001f);
             t.bottom();
             t.table(Styles.black6, b -> {
+                StringBuilder str = new StringBuilder();
                 b.defaults().left();
-                b.label(() -> Core.bundle.format("respawn", Core.keybinds.get(Binding.respawn).key.toString())).style(Styles.outlineLabel);
-            }).margin(6f);
-        });
-
-        //building hints
-        group.fill(t -> {
-            t.bottom();
-            t.visible(() -> {
-                t.color.a = Mathf.lerpDelta(t.color.a, !isBuilding && !Core.settings.getBool("buildautopause") || player.unit().isBuilding() ? 1f : 0f, 0.15f);
-
-                return ui.hudfrag.shown && Core.settings.getBool("hints") && selectRequests.isEmpty() && t.color.a > 0.01f;
-            });
-            t.touchable(() -> t.color.a < 0.1f ? Touchable.disabled : Touchable.childrenOnly);
-            t.table(Styles.black6, b -> {
-                b.defaults().left();
-                b.label(() -> ((!isBuilding || !wasBuilding) && !Core.settings.getBool("buildautopause") && !player.unit().isBuilding() ?
-                    Core.bundle.format("enablebuilding", Core.keybinds.get(Binding.pause_building).key.toString()) :
-                    Core.bundle.format(isBuilding ? "pausebuilding" : "resumebuilding", Core.keybinds.get(Binding.pause_building).key.toString()) +
-                    "\n" + Core.bundle.format("cancelbuilding", Core.keybinds.get(Binding.clear_building).key.toString()) +
-                    "\n" + Core.bundle.format("selectschematic", Core.keybinds.get(Binding.schematic_select).key.toString())
-                )).style(Styles.outlineLabel);
+                b.label(() -> {
+                    if(!showHint()) return str;
+                    str.setLength(0);
+                    if(!isBuilding && !Core.settings.getBool("buildautopause") && !player.unit().isBuilding()){
+                        str.append(Core.bundle.format("enablebuilding", Core.keybinds.get(Binding.pause_building).key.toString()));
+                    }else if(player.unit().isBuilding()){
+                        str.append(Core.bundle.format(isBuilding ? "pausebuilding" : "resumebuilding", Core.keybinds.get(Binding.pause_building).key.toString()))
+                            .append("\n").append(Core.bundle.format("cancelbuilding", Core.keybinds.get(Binding.clear_building).key.toString()))
+                            .append("\n").append(Core.bundle.format("selectschematic", Core.keybinds.get(Binding.schematic_select).key.toString()));
+                    }
+                    if(!player.dead() && !player.unit().spawnedByCore()){
+                        str.append(str.length() != 0 ? "\n" : "").append(Core.bundle.format("respawn", Core.keybinds.get(Binding.respawn).key.toString()));
+                    }
+                    return str;
+                }).style(Styles.outlineLabel);
             }).margin(10f);
         });
 
@@ -158,7 +162,7 @@ public class DesktopInput extends InputHandler{
                 }
                 lineRequests.each(this::drawOverRequest);
             }else if(isPlacing()){
-                if(block.rotate){
+                if(block.rotate && block.drawArrow){
                     drawArrow(block, cursorX, cursorY, rotation);
                 }
                 Draw.color();
@@ -200,7 +204,6 @@ public class DesktopInput extends InputHandler{
             panning = false;
         }
 
-        //TODO awful UI state checking code
         if(((player.dead() || state.isPaused()) && !ui.chatfrag.shown()) && !scene.hasField() && !scene.hasDialog()){
             if(input.keyDown(Binding.mouse_move)){
                 panCam = true;
@@ -221,19 +224,25 @@ public class DesktopInput extends InputHandler{
         if(!scene.hasMouse()){
             if(Core.input.keyDown(Binding.control) && Core.input.keyTap(Binding.select)){
                 Unit on = selectedUnit();
+                var build = selectedControlBuild();
                 if(on != null){
                     Call.unitControl(player, on);
                     shouldShoot = false;
+                    recentRespawnTimer = 1f;
+                }else if(build != null){
+                    Call.buildingControlSelect(player, build);
+                    recentRespawnTimer = 1f;
                 }
             }
         }
 
-        if(!player.dead() && !state.isPaused() && !(Core.scene.getKeyboardFocus() instanceof TextField)){
+        if(!player.dead() && !state.isPaused() && !scene.hasField() && !renderer.isCutscene()){
             updateMovement(player.unit());
 
-            if(Core.input.keyDown(Binding.respawn) && !player.unit().spawnedByCore() && !scene.hasField()){
-                Call.unitClear(player);
+            if(Core.input.keyTap(Binding.respawn)){
                 controlledType = null;
+                recentRespawnTimer = 1f;
+                Call.unitClear(player);
             }
         }
 
@@ -253,6 +262,13 @@ public class DesktopInput extends InputHandler{
         if((!Core.scene.hasScroll() || Core.input.keyDown(Binding.diagonal_placement)) && !ui.chatfrag.shown() && Math.abs(Core.input.axisTap(Binding.zoom)) > 0
             && !Core.input.keyDown(Binding.rotateplaced) && (Core.input.keyDown(Binding.diagonal_placement) || ((!player.isBuilder() || !isPlacing() || !block.rotate) && selectRequests.isEmpty()))){
             renderer.scaleCamera(Core.input.axisTap(Binding.zoom));
+        }
+
+        if(Core.input.keyTap(Binding.select) && !Core.scene.hasMouse()){
+            Tile selected = world.tileWorld(input.mouseWorldX(), input.mouseWorldY());
+            if(selected != null){
+                Call.tileTap(player, selected);
+            }
         }
 
         if(player.dead()){
@@ -455,7 +471,6 @@ public class DesktopInput extends InputHandler{
             buildWasAutoPaused = false;
 
             if(isBuilding){
-                wasBuilding = player.unit().isBuilding();
                 player.shooting = false;
             }
         }
@@ -467,10 +482,6 @@ public class DesktopInput extends InputHandler{
         }
 
         if(Core.input.keyTap(Binding.select) && !Core.scene.hasMouse()){
-            if(selected != null){
-                Call.tileTap(player, selected);
-            }
-
             BuildPlan req = getRequest(cursorX, cursorY);
 
             if(Core.input.keyDown(Binding.break_block)){
@@ -490,13 +501,15 @@ public class DesktopInput extends InputHandler{
                 deleting = true;
             }else if(selected != null){
                 //only begin shooting if there's no cursor event
-                if(!tryTapPlayer(Core.input.mouseWorld().x, Core.input.mouseWorld().y) && !tileTapped(selected.build) && !player.unit().activelyBuilding() && !droppingItem &&
-                    !tryBeginMine(selected) && player.unit().mineTile == null && !Core.scene.hasKeyboard()){
+                if(!tryTapPlayer(Core.input.mouseWorld().x, Core.input.mouseWorld().y) && !tileTapped(selected.build) && !player.unit().activelyBuilding() && !droppingItem
+                    && !(tryStopMine(selected) || (!settings.getBool("doubletapmine") || selected == prevSelected && Time.timeSinceMillis(selectMillis) < 500) && tryBeginMine(selected)) && !Core.scene.hasKeyboard()){
                     player.shooting = shouldShoot;
                 }
             }else if(!Core.scene.hasKeyboard()){ //if it's out of bounds, shooting is just fine
                 player.shooting = shouldShoot;
             }
+            selectMillis = Time.millis();
+            prevSelected = selected;
         }else if(Core.input.keyTap(Binding.deselect) && isPlacing()){
             block = null;
             mode = none;
@@ -563,7 +576,6 @@ public class DesktopInput extends InputHandler{
             }
 
             mode = none;
-            wasBuilding = true;
         }
 
         if(Core.input.keyTap(Binding.toggle_block_status)){
@@ -633,16 +645,13 @@ public class DesktopInput extends InputHandler{
         if(omni){
             unit.moveAt(movement);
         }else{
-            unit.moveAt(Tmp.v2.trns(unit.rotation, movement.len()));
-            if(!movement.isZero()){
-                unit.vel.rotateTo(movement.angle(), unit.type.rotateSpeed * Math.max(Time.delta, 1));
-            }
+            unit.rotateMove(movement);
         }
 
         unit.aim(unit.type.faceTarget ? Core.input.mouseWorld() : Tmp.v1.trns(unit.rotation, Core.input.mouseWorld().dst(unit)).add(unit.x, unit.y));
         unit.controlWeapons(true, player.shooting && !boosted);
 
-        player.boosting = Core.input.keyDown(Binding.boost) && !movement.isZero();
+        player.boosting = Core.input.keyDown(Binding.boost);
         player.mouseX = unit.aimX();
         player.mouseY = unit.aimY();
 
