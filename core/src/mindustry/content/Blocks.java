@@ -865,7 +865,7 @@ public class Blocks implements ContentList{
             range = 40f;
             healPercent = 2f; // in reality its heal amount, not percent
             damageAmount = 65f;
-            electrifyTime = 80f;
+            electrifyTime = 60f;
             phaseBoost = 1.5f;
             phaseRangeBoost = 20f;
             health = 80;
@@ -880,7 +880,7 @@ public class Blocks implements ContentList{
             range = 85f;
             healPercent = 6f; // in reality its heal amount, not percent
             damageAmount = 125f;
-            electrifyTime = 180f;
+            electrifyTime = 80f;
             phaseBoost = 1.5f;
             health = 80 * size * size;
             consumes.item(Items.phaseFabric).boost();
