@@ -1407,7 +1407,7 @@ public class UnitTypes implements ContentList{
             defaultController = DefenderAI::new;
 
             armor = 16f;
-            health = 24000;
+            health = 10000;
             speed = 0.8f;
             rotateSpeed = 1f;
             accel = 0.04f;
@@ -1425,7 +1425,7 @@ public class UnitTypes implements ContentList{
             buildBeamOffset = 43;
             ammoCapacity = 1;
 
-            abilities.add(new ForceFieldAbility(140f, 4f, 7000f, 60f * 8), new RepairFieldAbility(130f, 60f * 2, 140f));
+            abilities.add(new ForceFieldAbility(160f, 8f, 100000f, 60f * 2));
         }};
 
         //endregion
