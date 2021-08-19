@@ -7,13 +7,16 @@ import arc.util.*;
 import arc.util.io.*;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
+import mindustry.entities.Units;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.logic.*;
+import mindustry.td.TowerDefense;
 import mindustry.world.*;
 import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
+import static mindustry.td.TowerDefense.AttackingTeam;
 
 public class MendProjector extends Block{
     public final int timerUse = timers++;
@@ -23,6 +26,8 @@ public class MendProjector extends Block{
     public float reload = 250f;
     public float range = 60f;
     public float healPercent = 12f;
+    public float damageAmount = 25f;
+    public float electrifyTime = 120f;
     public float phaseBoost = 12f;
     public float phaseRangeBoost = 50f;
     public float useTime = 400f;
@@ -91,8 +96,14 @@ public class MendProjector extends Block{
                 float realRange = range + phaseHeat * phaseRangeBoost;
                 charge = 0f;
 
+                Units.nearby(AttackingTeam, x, y, range, u -> {
+                    u.damage(damageAmount + phaseHeat * phaseBoost);
+                    u.apply(StatusEffects.electrified, electrifyTime);
+                    Call.effect(Fx.electrified, u.x, u.y, 1, Color.yellow);
+                });
+
                 indexer.eachBlock(this, realRange, Building::damaged, other -> {
-                    other.heal(other.maxHealth() * (healPercent + phaseHeat * phaseBoost) / 100f * efficiency());
+                    other.heal((healPercent + phaseHeat * phaseBoost) * efficiency());
                     Fx.healBlockFull.at(other.x, other.y, other.block.size, baseColor);
                 });
             }
