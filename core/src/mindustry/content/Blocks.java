@@ -2001,7 +2001,7 @@ public class Blocks implements ContentList{
 
         repairPoint = new RepairPoint("repair-point"){{
             requirements(Category.units, with(Items.lead, 30, Items.copper, 30, Items.silicon, 20));
-            repairSpeed = 2f; // time of overclock ability (basically, how many units can it overclock simultaneously)
+            repairSpeed = 20f; // time of overclock ability (basically, how many units can it overclock simultaneously)
             repairRadius = 60f;
             beamWidth = 0.73f;
             powerUse = 1f;
@@ -2012,7 +2012,7 @@ public class Blocks implements ContentList{
             requirements(Category.units, with(Items.silicon, 90, Items.thorium, 80, Items.plastanium, 60));
             size = 2;
             length = 6f;
-            repairSpeed = 12f;
+            repairSpeed = 40f;
             repairRadius = 145f;
             powerUse = 5f;
             beamWidth = 1.1f;
