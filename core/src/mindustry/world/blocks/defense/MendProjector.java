@@ -16,7 +16,6 @@ import mindustry.world.*;
 import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
-import static mindustry.td.TowerDefense.AttackingTeam;
 
 public class MendProjector extends Block{
     public final int timerUse = timers++;
@@ -96,7 +95,7 @@ public class MendProjector extends Block{
                 float realRange = range + phaseHeat * phaseRangeBoost;
                 charge = 0f;
 
-                Units.nearby(AttackingTeam, x, y, range, u -> {
+                Units.nearby(state.rules.waveTeam, x, y, range, u -> {
                     u.damage(damageAmount + phaseHeat * phaseBoost);
                     u.apply(StatusEffects.electrified, electrifyTime);
                     Call.effect(Fx.electrified, u.x, u.y, 1, Color.yellow);

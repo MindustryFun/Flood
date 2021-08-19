@@ -41,7 +41,7 @@ public class ForceProjector extends Block{
             paramEntity.buildup += trait.damage();
 
             // break shield upon contact with EMP bullet
-            if (trait.team() != TowerDefense.AttackingTeam) {
+            if (trait.team() != state.rules.waveTeam) {
                 paramEntity.buildup += 90000f;
             }
             trait.absorb();
@@ -169,7 +169,7 @@ public class ForceProjector extends Block{
             float realRadius = realRadius();
 
             Groups.unit.intersect(x - realRadius, y - realRadius, realRadius * 2f, realRadius * 2f, con -> {
-                if (con.team() == TowerDefense.AttackingTeam && Intersector.isInsideHexagon(paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, con.x(), con.y())) {
+                if (con.team() == state.rules.waveTeam && Intersector.isInsideHexagon(paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, con.x(), con.y())) {
                     con.apply(StatusEffects.sapped, 2f);
                     if(Mathf.chance(0.01f)) {
                         Call.effect(Fx.sapped, con.x(), con.y(), 1f, Color.yellow);
