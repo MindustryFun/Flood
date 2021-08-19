@@ -191,6 +191,9 @@ public class RepairPoint extends Block{
                     healed = true;
                     target.heal(1);
                     target.apply(StatusEffects.overclock, repairSpeed);
+                    if (Mathf.chance(0.1f)) {
+                        Call.effect(Fx.overclocked, x, y, 1, Color.yellow);
+                    }
                 }
                 rotation = Mathf.slerpDelta(rotation, angle, 0.5f * efficiency() * timeScale);
             }
