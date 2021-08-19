@@ -9,6 +9,7 @@ import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
 import mindustry.entities.*;
 import mindustry.entities.EntityCollisions.*;
+import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
@@ -122,7 +123,7 @@ abstract class LegsComp implements Posc, Rotc, Hitboxc, Flyingc, Unitc{
                         Effect.shake(type.landShake, type.landShake, l.base);
                     }
 
-                    if(type.legSplashDamage > 0){
+                    if(type.legSplashDamage > 0 && team() == Team.sharded){
                         Damage.damage(team(), l.base.x, l.base.y, type.legSplashRange, type.legSplashDamage, false, true);
                     }
                 }
