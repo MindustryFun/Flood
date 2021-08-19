@@ -13,6 +13,7 @@ import mindustry.content.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.logic.*;
+import mindustry.td.TowerDefense;
 import mindustry.ui.*;
 import mindustry.world.*;
 import mindustry.world.consumers.*;
@@ -36,10 +37,15 @@ public class ForceProjector extends Block{
     static ForceBuild paramEntity;
     static final Cons<Bullet> shieldConsumer = trait -> {
         if(trait.team != paramEntity.team && trait.type.absorbable && Intersector.isInsideHexagon(paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, trait.x(), trait.y())){
-            trait.absorb();
-            Fx.absorb.at(trait);
             paramEntity.hit = 1f;
             paramEntity.buildup += trait.damage();
+
+            // break shield upon contact with EMP bullet
+            if (trait.team() != TowerDefense.AttackingTeam) {
+                paramEntity.buildup += 90000f;
+            }
+            trait.absorb();
+            Fx.absorb.at(trait);
         }
     };
 
@@ -161,6 +167,15 @@ public class ForceProjector extends Block{
             }
 
             float realRadius = realRadius();
+
+            Groups.unit.intersect(x - realRadius, y - realRadius, realRadius * 2f, realRadius * 2f, con -> {
+                if (con.team() == TowerDefense.AttackingTeam && Intersector.isInsideHexagon(paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, con.x(), con.y())) {
+                    con.apply(StatusEffects.sapped, 2f);
+                    if(Mathf.chance(0.01f)) {
+                        Call.effect(Fx.sapped, con.x(), con.y(), 1f, Color.yellow);
+                    }
+                }
+            });
 
             if(realRadius > 0 && !broken){
                 paramEntity = this;

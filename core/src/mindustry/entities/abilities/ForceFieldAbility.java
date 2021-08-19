@@ -11,6 +11,7 @@ import arc.util.*;
 import mindustry.content.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
+import mindustry.td.TowerDefense;
 import mindustry.ui.*;
 
 public class ForceFieldAbility extends Ability{
@@ -34,8 +35,8 @@ public class ForceFieldAbility extends Ability{
             trait.absorb();
             Fx.absorb.at(trait);
 
-            //break shield
-            if(paramUnit.shield <= trait.damage()){
+            // break shield if in contact with EMP bullet
+            if(paramUnit.team() != TowerDefense.AttackingTeam || paramUnit.shield <= trait.damage()){
                 paramUnit.shield -= paramField.cooldown * paramField.regen;
 
                 Fx.shieldBreak.at(paramUnit.x, paramUnit.y, paramField.radius, paramUnit.team.color);
@@ -68,6 +69,15 @@ public class ForceFieldAbility extends Ability{
             paramUnit = unit;
             paramField = this;
             checkRadius(unit);
+
+            Groups.unit.intersect(unit.x - realRad, unit.y - realRad, realRad * 2f, realRad * 2f, con -> {
+                if (con.team() == TowerDefense.AttackingTeam && Intersector.isInsideHexagon(unit.x, unit.y, realRad * 2f, con.x(), con.y())) {
+                    con.apply(StatusEffects.sapped, 2f);
+                    if(Mathf.chance(0.01f)) {
+                        Call.effect(Fx.sapped, con.x(), con.y(), 1f, Color.yellow);
+                    }
+                }
+            });
 
             Groups.bullet.intersect(unit.x - realRad, unit.y - realRad, realRad * 2f, realRad * 2f, shieldConsumer);
         }else{

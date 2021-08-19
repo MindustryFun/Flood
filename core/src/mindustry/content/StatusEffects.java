@@ -66,7 +66,6 @@ public class StatusEffects implements ContentList{
             color = Color.royal;
             speedMultiplier = 0.84f;
             effect = Fx.wet;
-            effectChance = 0.09f;
             transitionDamage = 14;
 
             init(() -> {
@@ -84,7 +83,6 @@ public class StatusEffects implements ContentList{
             color = Color.valueOf("46382a");
             speedMultiplier = 0.94f;
             effect = Fx.muddy;
-            effectChance = 0.09f;
             show = false;
         }};
 
@@ -107,10 +105,8 @@ public class StatusEffects implements ContentList{
 
         sapped = new StatusEffect("sapped"){{
             color = Pal.sap;
-            speedMultiplier = 0.7f;
             healthMultiplier = 0.8f;
             effect = Fx.sapped;
-            effectChance = 0.1f;
         }};
 
         electrified = new StatusEffect("electrified"){{
@@ -118,14 +114,12 @@ public class StatusEffects implements ContentList{
             speedMultiplier = 0.7f;
             reloadMultiplier = 0.6f;
             effect = Fx.electrified;
-            effectChance = 0.1f;
         }};
 
         sporeSlowed = new StatusEffect("spore-slowed"){{
             color = Pal.spore;
             speedMultiplier = 0.8f;
             effect = Fx.sapped;
-            effectChance = 0.04f;
         }};
 
         tarred = new StatusEffect("tarred"){{
