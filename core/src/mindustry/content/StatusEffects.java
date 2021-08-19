@@ -64,7 +64,7 @@ public class StatusEffects implements ContentList{
 
         wet = new StatusEffect("wet"){{
             color = Color.royal;
-            speedMultiplier = 0.94f;
+            speedMultiplier = 0.84f;
             effect = Fx.wet;
             effectChance = 0.09f;
             transitionDamage = 14;
