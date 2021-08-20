@@ -20,7 +20,7 @@ public class UnitDrops {
         UnitTypes.scepter, ItemStack.with(Items.copper, 300, Items.silicon, 80, Items.metaglass, 80, Items.titanium, 80, Items.thorium, 20, Items.phaseFabric, 10),
         UnitTypes.reign, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 5, Items.surgeAlloy, 15),
 
-        // Lazers
+        // Lasers
         UnitTypes.nova, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.metaglass, 3),
         UnitTypes.pulsar, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.metaglass, 10),
         UnitTypes.quasar, ItemStack.with(Items.lead, 100, Items.metaglass, 40, Items.silicon, 40, Items.titanium, 80, Items.thorium, 10),
