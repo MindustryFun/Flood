@@ -1,17 +1,14 @@
 package mindustry.td;
 
-import mindustry.Vars;
-import mindustry.content.Blocks;
-import mindustry.game.Team;
-import mindustry.gen.Call;
-import mindustry.gen.Player;
-import mindustry.net.Administration;
-import mindustry.world.blocks.storage.CoreBlock;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.gen.*;
+import mindustry.net.*;
+import mindustry.world.blocks.storage.*;
 
 public class TowerDefense {
 
     public static void init() {
-        UnitDrops.init();
 
         Vars.netServer.admins.addActionFilter(action -> {
             Player player = action.player;
