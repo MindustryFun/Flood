@@ -1,97 +1,64 @@
 package mindustry.td;
 
-import mindustry.Vars;
-import mindustry.content.Blocks;
-import mindustry.content.Items;
-import mindustry.content.UnitTypes;
-import mindustry.gen.Call;
-import mindustry.gen.Player;
-import mindustry.net.Administration;
-import mindustry.type.Item;
-import mindustry.type.ItemStack;
-import mindustry.type.UnitType;
-import mindustry.world.blocks.storage.CoreBlock;
-
-import java.util.HashMap;
+import arc.struct.*;
+import mindustry.content.*;
+import mindustry.type.*;
 
 public class UnitDrops {
-    public static HashMap<UnitType, ItemStack[]> drops = new HashMap<>();
-    public static HashMap<Item, String> itemIcons = new HashMap<>();
-
-    public static void init(){
-
+    public static ObjectMap<UnitType, ItemStack[]> drops = ObjectMap.of(
         // Spiders
-        drops.put(UnitTypes.crawler, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.graphite, 3));
-        drops.put(UnitTypes.atrax, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.graphite, 10, Items.titanium, 5));
-        drops.put(UnitTypes.spiroct, ItemStack.with(Items.lead, 100, Items.silicon, 40, Items.graphite, 40, Items.thorium, 10));
-        drops.put(UnitTypes.arkyid, ItemStack.with(Items.copper, 300, Items.graphite, 80, Items.metaglass, 80, Items.titanium, 80, Items.thorium, 20, Items.phaseFabric, 10));
-        drops.put(UnitTypes.toxopid, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 5, Items.surgeAlloy, 15));
+        UnitTypes.crawler, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.graphite, 3)
+        UnitTypes.atrax, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.graphite, 10, Items.titanium, 5)
+        UnitTypes.spiroct, ItemStack.with(Items.lead, 100, Items.silicon, 40, Items.graphite, 40, Items.thorium, 10)
+        UnitTypes.arkyid, ItemStack.with(Items.copper, 300, Items.graphite, 80, Items.metaglass, 80, Items.titanium, 80, Items.thorium, 20, Items.phaseFabric, 10)
+        UnitTypes.toxopid, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 5, Items.surgeAlloy, 15)
 
         // Shooters
-        drops.put(UnitTypes.dagger, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.silicon, 3));
-        drops.put(UnitTypes.mace, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.silicon, 10, Items.titanium, 5));
-        drops.put(UnitTypes.fortress, ItemStack.with(Items.lead, 100, Items.silicon, 40, Items.graphite, 40, Items.thorium, 10));
-        drops.put(UnitTypes.scepter, ItemStack.with(Items.copper, 300, Items.silicon, 80, Items.metaglass, 80, Items.titanium, 80, Items.thorium, 20, Items.phaseFabric, 10));
-        drops.put(UnitTypes.reign, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 5, Items.surgeAlloy, 15));
+        UnitTypes.dagger, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.silicon, 3)
+        UnitTypes.mace, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.silicon, 10, Items.titanium, 5)
+        UnitTypes.fortress, ItemStack.with(Items.lead, 100, Items.silicon, 40, Items.graphite, 40, Items.thorium, 10)
+        UnitTypes.scepter, ItemStack.with(Items.copper, 300, Items.silicon, 80, Items.metaglass, 80, Items.titanium, 80, Items.thorium, 20, Items.phaseFabric, 10)
+        UnitTypes.reign, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 5, Items.surgeAlloy, 15)
 
         // Lazers
-        drops.put(UnitTypes.nova, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.metaglass, 3));
-        drops.put(UnitTypes.pulsar, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.metaglass, 10));
-        drops.put(UnitTypes.quasar, ItemStack.with(Items.lead, 100, Items.metaglass, 40, Items.silicon, 40, Items.titanium, 80, Items.thorium, 10));
-        drops.put(UnitTypes.vela, ItemStack.with(Items.copper, 300, Items.metaglass, 80, Items.graphite, 80, Items.titanium, 60, Items.plastanium, 20, Items.surgeAlloy, 5));
-        drops.put(UnitTypes.corvus, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 100, Items.metaglass, 120, Items.graphite, 100, Items.titanium, 120, Items.thorium, 60, Items.phaseFabric, 10, Items.surgeAlloy, 10));
+        UnitTypes.nova, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.metaglass, 3)
+        UnitTypes.pulsar, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.metaglass, 10)
+        UnitTypes.quasar, ItemStack.with(Items.lead, 100, Items.metaglass, 40, Items.silicon, 40, Items.titanium, 80, Items.thorium, 10)
+        UnitTypes.vela, ItemStack.with(Items.copper, 300, Items.metaglass, 80, Items.graphite, 80, Items.titanium, 60, Items.plastanium, 20, Items.surgeAlloy, 5)
+        UnitTypes.corvus, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 100, Items.metaglass, 120, Items.graphite, 100, Items.titanium, 120, Items.thorium, 60, Items.phaseFabric, 10, Items.surgeAlloy, 10)
 
         // Flyers
-        drops.put(UnitTypes.flare, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.graphite, 3, Items.scrap, 1));
-        drops.put(UnitTypes.horizon, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.graphite, 10, Items.scrap, 2));
-        drops.put(UnitTypes.zenith, ItemStack.with(Items.lead, 100, Items.silicon, 40, Items.graphite, 40, Items.titanium, 30, Items.plastanium, 10, Items.scrap, 3));
-        drops.put(UnitTypes.antumbra, ItemStack.with(Items.copper, 300, Items.graphite, 80, Items.metaglass, 80, Items.titanium, 60, Items.surgeAlloy, 15, Items.scrap, 4));
-        drops.put(UnitTypes.eclipse, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.titanium, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 10, Items.surgeAlloy, 5, Items.scrap, 5));
+        UnitTypes.flare, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.graphite, 3, Items.scrap, 1)
+        UnitTypes.horizon, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.graphite, 10, Items.scrap, 2)
+        UnitTypes.zenith, ItemStack.with(Items.lead, 100, Items.silicon, 40, Items.graphite, 40, Items.titanium, 30, Items.plastanium, 10, Items.scrap, 3)
+        UnitTypes.antumbra, ItemStack.with(Items.copper, 300, Items.graphite, 80, Items.metaglass, 80, Items.titanium, 60, Items.surgeAlloy, 15, Items.scrap, 4)
+        UnitTypes.eclipse, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.titanium, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 10, Items.surgeAlloy, 5, Items.scrap, 5)
 
         // Support
-        drops.put(UnitTypes.mono, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.silicon, 3));
-        drops.put(UnitTypes.poly, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.silicon, 10, Items.titanium, 5));
-        drops.put(UnitTypes.mega, ItemStack.with(Items.lead, 100, Items.silicon, 40, Items.graphite, 40, Items.thorium, 10));
-        drops.put(UnitTypes.quad, ItemStack.with(Items.copper, 300, Items.silicon, 80, Items.metaglass, 80, Items.titanium, 80, Items.thorium, 20, Items.phaseFabric, 10));
-        drops.put(UnitTypes.oct, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 5, Items.surgeAlloy, 15));
+        UnitTypes.mono, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.silicon, 3)
+        UnitTypes.poly, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.silicon, 10, Items.titanium, 5)
+        UnitTypes.mega, ItemStack.with(Items.lead, 100, Items.silicon, 40, Items.graphite, 40, Items.thorium, 10)
+        UnitTypes.quad, ItemStack.with(Items.copper, 300, Items.silicon, 80, Items.metaglass, 80, Items.titanium, 80, Items.thorium, 20, Items.phaseFabric, 10)
+        UnitTypes.oct, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 120, Items.graphite, 120, Items.thorium, 40, Items.plastanium, 40, Items.phaseFabric, 5, Items.surgeAlloy, 15)
 
         // Ships
-        drops.put(UnitTypes.risso, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.metaglass, 3));
-        drops.put(UnitTypes.minke, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.metaglass, 10));
-        drops.put(UnitTypes.bryde, ItemStack.with(Items.lead, 100, Items.metaglass, 40, Items.silicon, 40, Items.titanium, 80, Items.thorium, 10));
-        drops.put(UnitTypes.sei, ItemStack.with(Items.copper, 300, Items.metaglass, 80, Items.graphite, 80, Items.titanium, 60, Items.plastanium, 20, Items.surgeAlloy, 5));
-        drops.put(UnitTypes.omura, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 100, Items.metaglass, 120, Items.graphite, 100, Items.titanium, 120, Items.thorium, 60, Items.phaseFabric, 10, Items.surgeAlloy, 10));
+        UnitTypes.risso, ItemStack.with(Items.copper, 20, Items.lead, 10, Items.metaglass, 3)
+        UnitTypes.minke, ItemStack.with(Items.copper, 30, Items.lead, 40, Items.metaglass, 10)
+        UnitTypes.bryde, ItemStack.with(Items.lead, 100, Items.metaglass, 40, Items.silicon, 40, Items.titanium, 80, Items.thorium, 10)
+        UnitTypes.sei, ItemStack.with(Items.copper, 300, Items.metaglass, 80, Items.graphite, 80, Items.titanium, 60, Items.plastanium, 20, Items.surgeAlloy, 5)
+        UnitTypes.omura, ItemStack.with(Items.copper, 400, Items.lead, 400, Items.silicon, 100, Items.metaglass, 120, Items.graphite, 100, Items.titanium, 120, Items.thorium, 60, Items.phaseFabric, 10, Items.surgeAlloy, 10)
 
 
         // New ships retusa, oxynoe, cyerce, aegires, navanax
-        drops.put(UnitTypes.aegires, ItemStack.with(Items.copper, 8, Items.lead, 2, Items.scrap, 8));
-        drops.put(UnitTypes.oxynoe, ItemStack.with(Items.copper, 12, Items.lead, 4, Items.scrap, 16, Items.silicon, 8, Items.plastanium, 2));
-        drops.put(UnitTypes.cyerce, ItemStack.with(Items.lead, 23, Items.metaglass, 27, Items.scrap, 86, Items.phaseFabric, 2, Items.thorium, 4));
-        drops.put(UnitTypes.aegires, ItemStack.with(Items.silicon, 47, Items.phaseFabric, 8, Items.surgeAlloy, 4, Items.plastanium, 18, Items.thorium, 18));
-        drops.put(UnitTypes.navanax, ItemStack.with(Items.surgeAlloy, 50, Items.phaseFabric, 50));
+        UnitTypes.aegires, ItemStack.with(Items.copper, 8, Items.lead, 2, Items.scrap, 8)
+        UnitTypes.oxynoe, ItemStack.with(Items.copper, 12, Items.lead, 4, Items.scrap, 16, Items.silicon, 8, Items.plastanium, 2)
+        UnitTypes.cyerce, ItemStack.with(Items.lead, 23, Items.metaglass, 27, Items.scrap, 86, Items.phaseFabric, 2, Items.thorium, 4)
+        UnitTypes.aegires, ItemStack.with(Items.silicon, 47, Items.phaseFabric, 8, Items.surgeAlloy, 4, Items.plastanium, 18, Items.thorium, 18)
+        UnitTypes.navanax, ItemStack.with(Items.surgeAlloy, 50, Items.phaseFabric, 50)
 
         // Basic
-        drops.put(UnitTypes.alpha, ItemStack.with(Items.copper, 30, Items.lead, 30, Items.silicon, 20, Items.graphite, 20, Items.metaglass, 20));
-        drops.put(UnitTypes.beta, ItemStack.with(Items.titanium, 40, Items.thorium, 20));
-        drops.put(UnitTypes.gamma, ItemStack.with(Items.plastanium, 20, Items.phaseFabric, 10, Items.surgeAlloy, 10));
-
-
-        itemIcons.put(Items.copper, "\uF838");
-        itemIcons.put(Items.lead, "\uF837");
-        itemIcons.put(Items.metaglass, "\uF836");
-        itemIcons.put(Items.graphite, "\uF835");
-        itemIcons.put(Items.sand, "\uF834");
-        itemIcons.put(Items.coal, "\uF833");
-        itemIcons.put(Items.titanium, "\uF832");
-        itemIcons.put(Items.thorium, "\uF831");
-        itemIcons.put(Items.scrap, "\uF830");
-        itemIcons.put(Items.silicon, "\uF82F");
-        itemIcons.put(Items.plastanium, "\uF82E");
-        itemIcons.put(Items.phaseFabric, "\uF82D");
-        itemIcons.put(Items.surgeAlloy, "\uF82C");
-        itemIcons.put(Items.sporePod, "\uF82B");
-        itemIcons.put(Items.blastCompound, "\uF82A");
-        itemIcons.put(Items.pyratite, "\uF829");
-
-    }
+        UnitTypes.alpha, ItemStack.with(Items.copper, 30, Items.lead, 30, Items.silicon, 20, Items.graphite, 20, Items.metaglass, 20)
+        UnitTypes.beta, ItemStack.with(Items.titanium, 40, Items.thorium, 20)
+        UnitTypes.gamma, ItemStack.with(Items.plastanium, 20, Items.phaseFabric, 10, Items.surgeAlloy, 10)
+    );
 }
