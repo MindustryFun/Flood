@@ -96,6 +96,11 @@ public class SpawnGroup implements JsonSerializable{
             }
         }
 
+        if (team == state.rules.waveTeam) {
+            unit.maxHealth = unit.maxHealth * state.multiplier;
+            unit.health = unit.maxHealth;
+        }
+
         Events.fire(new EventType.UnitSpawnEvent(unit));
         return unit;
     }

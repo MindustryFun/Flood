@@ -480,6 +480,16 @@ public class NetServer implements ApplicationListener{
                 netServer.sendWorldData(player);
             }
         });
+
+        clientCommands.<Player>register("hud", "Toggle the HUD.", (args, player) -> {
+            player.td_hud_toggle = !player.td_hud_toggle;
+            player.sendMessage(player.td_hud_toggle ? "[#1fde6b]\uE88E visible[]" : "[#f67664]\uE88F hidden[]");
+        });
+
+        clientCommands.<Player>register("drops", "Toggle the unit drops HUD.", (args, player) -> {
+            player.td_drops_hud_toggle = !player.td_drops_hud_toggle;
+            player.sendMessage(player.td_drops_hud_toggle ? "[#1fde6b]\uE88E visible[]" : "[#f67664]\uE88F hidden[]");
+        });
     }
 
     public int votesRequired(){

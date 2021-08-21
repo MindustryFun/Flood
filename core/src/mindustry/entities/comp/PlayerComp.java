@@ -38,6 +38,7 @@ abstract class PlayerComp implements UnitController, Entityc, Syncc, Timerc, Dra
     @SyncLocal float mouseX, mouseY;
     boolean admin;
     transient boolean td_hud_toggle = true;
+    transient boolean td_drops_hud_toggle = true;
     String name = "frog";
     Color color = new Color();
     //locale should not be synced.

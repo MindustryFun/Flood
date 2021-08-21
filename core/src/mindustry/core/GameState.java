@@ -35,6 +35,9 @@ public class GameState{
     /** Current game state. */
     private State state = State.menu;
 
+    /** TD vars */
+    public float multiplier; // unit health multiplier
+
     @Nullable
     public Unit boss(){
         return teams.bosses.firstOpt();
