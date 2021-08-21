@@ -138,7 +138,7 @@ public class UnitTypes implements ContentList{
                 shootSound = Sounds.artillery;
                 bullet = new ArtilleryBulletType(2f, 20, "shell"){{
                     hitEffect = Fx.blastExplosion;
-                    knockback = 0.8f;
+                    // knockback = 0.8f;
                     lifetime = 120f;
                     width = height = 14f;
                     collides = true;
@@ -669,7 +669,7 @@ public class UnitTypes implements ContentList{
                     despawnEffect = Fx.none;
                     width = 0.54f;
                     lifetime = 35f;
-                    knockback = -1.24f;
+                    // knockback = -1.24f;
                 }};
             }});
 
@@ -689,7 +689,7 @@ public class UnitTypes implements ContentList{
                     despawnEffect = Fx.none;
                     width = 0.4f;
                     lifetime = 25f;
-                    knockback = -0.65f;
+                    // knockback = -0.65f;
                 }};
             }});
         }};
@@ -733,7 +733,7 @@ public class UnitTypes implements ContentList{
                 despawnEffect = Fx.none;
                 width = 0.55f;
                 lifetime = 30f;
-                knockback = -1f;
+                // knockback = -1f;
             }};
 
             weapons.add(
@@ -776,7 +776,7 @@ public class UnitTypes implements ContentList{
 
                 bullet = new ArtilleryBulletType(2f, 12){{
                     hitEffect = Fx.sapExplosion;
-                    knockback = 0.8f;
+                    // knockback = 0.8f;
                     lifetime = 70f;
                     width = height = 19f;
                     collidesTiles = true;
@@ -875,7 +875,7 @@ public class UnitTypes implements ContentList{
 
                 bullet = new ArtilleryBulletType(3f, 50){{
                     hitEffect = Fx.sapExplosion;
-                    knockback = 0.8f;
+                    // knockback = 0.8f;
                     lifetime = 80f;
                     width = height = 25f;
                     collidesTiles = collides = true;
@@ -900,7 +900,7 @@ public class UnitTypes implements ContentList{
 
                     fragBullet = new ArtilleryBulletType(2.3f, 30){{
                         hitEffect = Fx.sapExplosion;
-                        knockback = 0.8f;
+                        // knockback = 0.8f;
                         lifetime = 90f;
                         width = height = 20f;
                         collidesTiles = false;
@@ -1406,9 +1406,9 @@ public class UnitTypes implements ContentList{
         oct = new UnitType("oct"){{
             defaultController = DefenderAI::new;
 
-            armor = 16f;
-            health = 10000;
-            speed = 0.8f;
+            armor = 0f;
+            health = 50000;
+            speed = 0.4f;
             rotateSpeed = 1f;
             accel = 0.04f;
             drag = 0.018f;
@@ -1564,7 +1564,7 @@ public class UnitTypes implements ContentList{
                 bullet = new ArtilleryBulletType(3.2f, 12){{
                     trailMult = 0.8f;
                     hitEffect = Fx.massiveExplosion;
-                    knockback = 1.5f;
+                    // knockback = 1.5f;
                     lifetime = 80f;
                     height = 15.5f;
                     width = 15f;
