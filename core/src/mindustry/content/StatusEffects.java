@@ -147,7 +147,7 @@ public class StatusEffects implements ContentList{
         overclock = new StatusEffect("overclock"){{
             color = Pal.accent;
             speedMultiplier = 1.15f;
-            damageMultiplier = 2.0f;
+            damageMultiplier = 1.5f;
             reloadMultiplier = 1.25f;
             effect = Fx.overclocked;
         }};
@@ -182,6 +182,7 @@ public class StatusEffects implements ContentList{
         disarmed = new StatusEffect("disarmed"){{
             color = Color.valueOf("e9ead3");
             disarm = true;
+            permanent = true;
         }};
 
         invincible = new StatusEffect("invincible"){{
