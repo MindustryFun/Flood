@@ -19,7 +19,7 @@ import mindustry.world.*;
 import static mindustry.Vars.*;
 
 public class WaveSpawner{
-    private static final float margin = 40f, coreMargin = tilesize * 2f, maxSteps = 30;
+    private static final float margin = 80f, coreMargin = tilesize * 2f, maxSteps = 30;
 
     private int tmpCount;
     private Seq<Tile> spawns = new Seq<>();
@@ -70,6 +70,18 @@ public class WaveSpawner{
             if(group.type.flying){
                 float spread = margin / 1.5f;
 
+                /*  * use this method if flying units are following path, otherwise use the one below
+                eachGroundSpawn((spawnX, spawnY) -> {
+                    for(int i = 0; i < spawned; i++){
+                        Tmp.v1.rnd(spread);
+
+                        Unit unit = group.createUnit(state.rules.waveTeam, state.wave - 1);
+                        unit.set(spawnX + Tmp.v1.x, spawnY + Tmp.v1.y);
+                        spawnEffect(unit);
+                    }
+                });
+                 */
+
                 eachFlyerSpawn((spawnX, spawnY) -> {
                     for(int i = 0; i < spawned; i++){
                         Unit unit = group.createUnit(state.rules.waveTeam, state.wave - 1);
@@ -77,6 +89,7 @@ public class WaveSpawner{
                         spawnEffect(unit);
                     }
                 });
+
             }else{
                 float spread = tilesize * 2;
 
