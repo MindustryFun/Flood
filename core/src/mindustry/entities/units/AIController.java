@@ -24,7 +24,7 @@ public class AIController implements UnitController{
     protected AIController fallback;
 
     /** main target that is being faced */
-    protected Teamc target;
+    public Teamc target;
 
     {
         timer.reset(0, Mathf.random(40f));
