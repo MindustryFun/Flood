@@ -29,6 +29,7 @@ public class RepairPoint extends Block{
 
     public float repairRadius = 50f;
     public float repairSpeed = 0.3f;
+    public float repairCooldown = 20f;
     public float powerUse;
     public float length = 5f;
     public float beamWidth = 1f;
@@ -191,7 +192,7 @@ public class RepairPoint extends Block{
                     target.heal(1);
                     target.apply(StatusEffects.overclock, repairSpeed);
 
-                    Call.effect(Fx.overclocked, x, y, 1, Color.yellow);
+                    Call.effect(Fx.overclocked, target.x(), target.y(), 1, Color.yellow);
 
                 }
                 rotation = Mathf.slerpDelta(rotation, angle, 0.5f * efficiency() * timeScale);
@@ -199,11 +200,11 @@ public class RepairPoint extends Block{
 
             strength = Mathf.lerpDelta(strength, healed ? 1f : 0f, 0.08f * Time.delta);
 
-            if(timer(timerTarget, 80)){
+            if(timer(timerTarget, repairCooldown)){
                 rect.setSize(repairRadius * 2).setCenter(x, y);
                 target = Units.closest(team, x, y, repairRadius, f -> !f.hasEffect(StatusEffects.overclock));
-                if (target != null) {
-                    target.damage(1);
+                if (target != null && target.maxHealth - target.health < 10) {
+                    target.damage(10);
                 }
             }
         }

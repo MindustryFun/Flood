@@ -411,6 +411,15 @@ public class EventType{
         }
     }
 
+    /** Called when unit is spawned by any means */
+    public static class UnitSpawnEvent{
+        public final Unit unit;
+
+        public UnitSpawnEvent(Unit unit) {
+            this.unit = unit;
+        }
+    }
+
     /** Called when a unit is created in a reconstructor, factory or other unit. */
     public static class UnitCreateEvent{
         public final Unit unit;

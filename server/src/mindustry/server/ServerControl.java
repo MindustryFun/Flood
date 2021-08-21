@@ -22,6 +22,7 @@ import mindustry.mod.Mods.*;
 import mindustry.net.Administration.*;
 import mindustry.net.Packets.*;
 import mindustry.net.*;
+import mindustry.td.TowerDefense;
 import mindustry.type.*;
 
 import java.io.*;
@@ -325,6 +326,8 @@ public class ServerControl implements ApplicationListener{
                 result = maps.getShuffleMode().next(preset, state.map);
                 info("Randomized next map to be @.", result.name());
             }
+
+            TowerDefense.init();
 
             info("Loading map...");
 

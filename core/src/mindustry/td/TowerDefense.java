@@ -1,6 +1,7 @@
 package mindustry.td;
 
 import arc.Events;
+import arc.util.Log;
 import mindustry.*;
 import mindustry.content.*;
 import mindustry.game.EventType;
@@ -35,11 +36,11 @@ public class TowerDefense {
 
         // Disable enemy attacks, navanax have an exception to allow for their EMP to be fired
         // TODO: Maybe instead of the navanax check below, we can use Call.createBullet to spawn the EMP instead?
-        Events.on(EventType.UnitCreateEvent.class, e -> {
-            if (e.unit.team() == state.rules.waveTeam && e.unit.type != UnitTypes.navanax) e.unit.apply(StatusEffects.disarmed, Float.MAX_VALUE);
+        // TODO: make it work like spores in flood ^^
+        Events.on(EventType.UnitSpawnEvent.class, e -> {
+            if (e.unit.team() == state.rules.waveTeam) e.unit.apply(StatusEffects.disarmed, Float.MAX_VALUE);
         });
-        Events.on(EventType.WorldLoadEvent.class, e -> {
-            state.rules.waveTeam.rules().unitDamageMultiplier = 0; // Disable unit damage so that navanax doesnt break stuff
-        });
+
+        Log.info("TowerDefense inited");
     }
 }

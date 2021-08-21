@@ -98,7 +98,6 @@ public class MendProjector extends Block{
                 Units.nearby(state.rules.waveTeam, x, y, range, u -> {
                     u.damage(damageAmount + phaseHeat * phaseBoost);
                     u.apply(StatusEffects.electrified, electrifyTime);
-                    Call.effect(Fx.electrified, u.x, u.y, 1, Color.yellow);
                 });
 
                 indexer.eachBlock(this, realRange, Building::damaged, other -> {
