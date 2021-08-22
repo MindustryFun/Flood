@@ -112,7 +112,7 @@ public class StatusEffects implements ContentList{
 
         electrified = new StatusEffect("electrified"){{
             color = Pal.heal;
-            speedMultiplier = 0.7f;
+            speedMultiplier = 0.6f;
             reloadMultiplier = 0.6f;
             effect = Fx.electrified;
         }};
@@ -147,7 +147,7 @@ public class StatusEffects implements ContentList{
         overclock = new StatusEffect("overclock"){{
             color = Pal.accent;
             speedMultiplier = 1.15f;
-            damageMultiplier = 1.5f;
+            damageMultiplier = 2f;
             reloadMultiplier = 1.25f;
             effect = Fx.overclocked;
         }};
