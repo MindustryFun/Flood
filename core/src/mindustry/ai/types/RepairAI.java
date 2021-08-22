@@ -7,7 +7,7 @@ import mindustry.gen.*;
 import mindustry.world.blocks.ConstructBlock.*;
 
 public class RepairAI extends AIController{
-    public static float retreatDst = 160f, fleeRange = 310f, retreatDelay = Time.toSeconds * 3f;
+    public static float retreatDst = 0f, fleeRange = 0f, retreatDelay = Time.toSeconds * 3f;
 
     @Nullable Teamc avoid;
     float retreatTimer;

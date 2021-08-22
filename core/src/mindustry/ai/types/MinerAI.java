@@ -1,5 +1,6 @@
 package mindustry.ai.types;
 
+import arc.Core;
 import mindustry.content.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
@@ -17,8 +18,19 @@ public class MinerAI extends AIController{
     public void updateMovement(){
         Building core = unit.closestCore();
 
+
         if(!(unit.canMine()) || core == null) return;
 
+        circle(core, unit.type.range / 1.8f);
+        if(core != null && core.health < core.maxHealth && core.dst(unit) < tilesize * 2 + unit.type.range / 1.8f) {
+            Call.soundAt(Sounds.splash, core.x, core.y, 1f, 1.2f);
+            Call.effect(Fx.healBlockFull, core.x, core.y, core.block.size, core.team.color);
+            core.heal(unit.health);
+            unit.kill();
+        }
+        return;
+
+        /*
         if(unit.mineTile != null && !unit.mineTile.within(unit, unit.type.miningRange)){
             unit.mineTile(null);
         }
@@ -63,6 +75,7 @@ public class MinerAI extends AIController{
                 return;
             }
 
+            no no no
             if(unit.within(core, unit.type.range)){
                 if(core.acceptStack(unit.stack.item, unit.stack.amount, unit) > 0){
                     Call.transferItemTo(unit, unit.stack.item, unit.stack.amount, unit.x, unit.y, core);
@@ -72,7 +85,7 @@ public class MinerAI extends AIController{
                 mining = true;
             }
 
-            circle(core, unit.type.range / 1.8f);
         }
+        */
     }
 }

@@ -79,7 +79,7 @@ public class EntityCollisions{
         for(int dx = -r; dx <= r; dx++){
             for(int dy = -r; dy <= r; dy++){
                 int wx = dx + tilex, wy = dy + tiley;
-                if(solidCheck.solid(wx, wy)){
+                if(solidCheck.solid(wx, wy) && (entity instanceof Teamc) && ((Teamc) entity).team() != state.rules.waveTeam){
                     tmp.setSize(tilesize).setCenter(wx * tilesize, wy * tilesize);
 
                     if(tmp.overlaps(r1)){
@@ -156,6 +156,12 @@ public class EntityCollisions{
         float vay = a.getY() - a.lastY();
         float vbx = b.getX() - b.lastX();
         float vby = b.getY() - b.lastY();
+
+        /*
+        if(a instanceof Teamc && b instanceof Teamc) {
+            if(((Teamc) a).team() != ((Teamc) b).team()) return;
+        }
+         */
 
         if(a != b && a.collides(b)){
             l1.set(a.getX(), a.getY());

@@ -19,6 +19,7 @@ import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.*;
 import mindustry.world.blocks.defense.Wall.*;
+import mindustry.world.blocks.storage.CoreBlock;
 
 import static mindustry.Vars.*;
 
@@ -218,7 +219,7 @@ public class BulletType extends Content implements Cloneable{
             Fires.create(build.tile);
         }
 
-        if(healPercent > 0f && build.team == b.team && !(build.block instanceof ConstructBlock)){
+        if(healPercent > 0f && build.team == b.team && !(build.block instanceof CoreBlock) && !(build.block instanceof ConstructBlock)){
             Fx.healBlockFull.at(build.x, build.y, build.block.size, Pal.heal);
             build.heal(healPercent / 100f * build.maxHealth);
         }else if(build.team != b.team && direct){
@@ -282,8 +283,10 @@ public class BulletType extends Content implements Cloneable{
 
             if(healPercent > 0f){
                 indexer.eachBlock(b.team, x, y, splashDamageRadius, Building::damaged, other -> {
-                    Fx.healBlockFull.at(other.x, other.y, other.block.size, Pal.heal);
-                    other.heal(healPercent / 100f * other.maxHealth());
+                    if (!(other.block instanceof CoreBlock)) {
+                        Fx.healBlockFull.at(other.x, other.y, other.block.size, Pal.heal);
+                        other.heal(healPercent / 100f * other.maxHealth());
+                    }
                 });
             }
 

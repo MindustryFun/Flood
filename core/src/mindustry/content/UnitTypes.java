@@ -556,8 +556,6 @@ public class UnitTypes implements ContentList{
         //region ground legs
 
         crawler = new UnitType("crawler"){{
-            defaultController = SuicideAI::new;
-
             speed = 1f;
             hitSize = 8f;
             health = 200;
@@ -1280,7 +1278,7 @@ public class UnitTypes implements ContentList{
         }};
 
         mega = new UnitType("mega"){{
-            defaultController = RepairAI::new;
+            defaultController = SuicideAI::new;
 
             mineTier = 3;
             mineSpeed = 4f;

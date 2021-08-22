@@ -13,7 +13,7 @@ import mindustry.world.blocks.ConstructBlock.*;
 import static mindustry.Vars.*;
 
 public class BuilderAI extends AIController{
-    public static float buildRadius = 1500, retreatDst = 110f, fleeRange = 370f, retreatDelay = Time.toSeconds * 2f;
+    public static float buildRadius = 1500, retreatDst = 0f, fleeRange = 0f, retreatDelay = Time.toSeconds * 2f;
 
     public @Nullable Unit following;
     public @Nullable Teamc enemy;

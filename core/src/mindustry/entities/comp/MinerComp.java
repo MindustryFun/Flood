@@ -52,6 +52,8 @@ abstract class MinerComp implements Itemsc, Posc, Teamc, Rotc, Drawc{
     public void update(){
         Building core = closestCore();
 
+        // no mining to core
+        /*
         if(core != null && mineTile != null && mineTile.drop() != null && !acceptsItem(mineTile.drop()) && within(core, mineTransferRange) && !offloadImmediately()){
             int accepted = core.acceptStack(item(), stack().amount, this);
             if(accepted > 0){
@@ -61,6 +63,7 @@ abstract class MinerComp implements Itemsc, Posc, Teamc, Rotc, Drawc{
                 clearItem();
             }
         }
+         */
 
         if((!net.client() || isLocal()) && !validMine(mineTile)){
             mineTile = null;

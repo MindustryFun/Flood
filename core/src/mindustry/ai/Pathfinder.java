@@ -44,7 +44,8 @@ public class Pathfinder implements Runnable{
             PathTile.health(tile) * 5 +
             (PathTile.nearSolid(tile) ? 2 : 0) +
             (PathTile.nearLiquid(tile) ? 6 : 0) +
-            (PathTile.deep(tile) ? 6000 : 0) +
+            (PathTile.deep(tile) || !PathTile.isDarkPanel5(tile) ? 6000 : 0) +
+                (!PathTile.isDarkPanel4(tile) ? 30 : 0) +
             (PathTile.damages(tile) ? 30 : 0),
 
         //legs
@@ -52,7 +53,7 @@ public class Pathfinder implements Runnable{
             (PathTile.solid(tile) ? 5 : 0),
 
         //water
-        (team, tile) -> PathTile.solid(tile) || !PathTile.liquid(tile) ? 200 : 2 +
+        (team, tile) -> !PathTile.liquid(tile) ? 200 : 2 +
             (PathTile.nearGround(tile) || PathTile.nearSolid(tile) ? 14 : 0) +
             (PathTile.deep(tile) ? -1 : 0) +
             (PathTile.damages(tile) ? 35 : 0)
@@ -131,7 +132,9 @@ public class Pathfinder implements Runnable{
             nearGround,
             nearSolid,
             tile.floor().isDeep(),
-            tile.floor().damageTaken > 0.00001f
+            tile.floor().damageTaken > 0.00001f,
+                tile.floor() == Blocks.darkPanel5.asFloor(),
+                tile.floor() == Blocks.darkPanel4.asFloor()
         );
     }
 
@@ -494,5 +497,9 @@ public class Pathfinder implements Runnable{
         boolean deep;
         //whether the floor damages
         boolean damages;
+        //whether the floor is darkPanel5
+        boolean isDarkPanel5;
+        //whether the floor is darkPanel4
+        boolean isDarkPanel4;
     }
 }

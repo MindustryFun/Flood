@@ -1920,6 +1920,7 @@ public class Blocks implements ContentList{
             size = 3;
             consumes.power(1.2f);
             floating = true;
+            solid = false;
         }};
 
         additiveReconstructor = new Reconstructor("additive-reconstructor"){{

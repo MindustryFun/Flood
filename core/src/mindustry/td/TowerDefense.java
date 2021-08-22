@@ -68,9 +68,9 @@ public class TowerDefense {
 
         // Disable enemy attacks, navanax have an exception to allow for their EMP to be fired
         // TODO: Maybe instead of the navanax check below, we can use Call.createBullet to spawn the EMP instead?
-        // TODO: make it work like spores in flood ^^
         Events.on(EventType.UnitSpawnEvent.class, e -> {
-            if (e.unit.team() == state.rules.waveTeam) e.unit.apply(StatusEffects.disarmed, Float.MAX_VALUE);
+            if (e.unit.team() == state.rules.waveTeam && e.unit.type() != UnitTypes.navanax) e.unit.apply(StatusEffects.disarmed, Float.MAX_VALUE);
+            e.unit.damageMultiplier = 0f;
         });
 
         Events.on(EventType.WorldLoadEvent.class, e -> {

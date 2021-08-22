@@ -15,7 +15,8 @@ public class FlyingAI extends AIController{
 
         if(target != null && unit.hasWeapons() && command() == UnitCommand.attack){
             if(!unit.type.circleTarget){
-                moveTo(target, unit.type.range * 0.8f);
+                // moveTo(target, unit.type.range * 0.8f);
+                moveTo(target, unit.type.range * 0.2f);
                 unit.lookAt(target);
             }else{
                 attack(120f);
@@ -31,12 +32,15 @@ public class FlyingAI extends AIController{
         }
     }
 
+
+
     @Override
     public Teamc findTarget(float x, float y, float range, boolean air, boolean ground){
         var result = findMainTarget(x, y, range, air, ground);
 
         //if the main target is in range, use it, otherwise target whatever is closest
-        return checkTarget(result, x, y, range) ? target(x, y, range, air, ground) : result;
+        // return checkTarget(result, x, y, range) ? target(x, y, range, air, ground) : result;
+        return result;
     }
 
     @Override
@@ -48,8 +52,12 @@ public class FlyingAI extends AIController{
         }
 
         for(var flag : unit.team.isAI() ? unit.type.targetFlags : unit.type.playerTargetFlags){
-            if(flag == null){
-                Teamc result = target(x, y, range, air, ground);
+            if(true || flag == null){
+                // Teamc result = target(x, y, range, air, ground);
+                Teamc result = target(x, y, range * 100f, air, ground);
+                if(unit.team == state.rules.waveTeam) {
+                    result = target(x, y, range, false, false);
+                }
                 if(result != null) return result;
             }else if(ground){
                 Teamc result = targetFlag(x, y, flag, true);
@@ -59,6 +67,7 @@ public class FlyingAI extends AIController{
 
         return core;
     }
+
 
     protected void attack(float circleLength){
         vec.set(target).sub(unit);
@@ -76,4 +85,5 @@ public class FlyingAI extends AIController{
 
         unit.moveAt(vec);
     }
+
 }

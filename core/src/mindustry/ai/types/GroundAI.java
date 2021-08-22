@@ -16,7 +16,7 @@ public class GroundAI extends AIController{
 
         Building core = unit.closestEnemyCore();
 
-        if(core != null && unit.within(core, unit.range() / 1.3f + core.block.size * tilesize / 2f)){
+        if(core != null && unit.within(core, unit.range() / 2f + core.block.size * tilesize / 2f)){
             target = core;
             for(var mount : unit.mounts){
                 if(mount.weapon.controllable && mount.weapon.bullet.collidesGround){
@@ -25,7 +25,7 @@ public class GroundAI extends AIController{
             }
         }
 
-        if((core == null || !unit.within(core, unit.type.range * 0.5f)) && command() == UnitCommand.attack){
+        if((core == null || !unit.within(core, unit.type.range * 0.1f)) && command() == UnitCommand.attack){
             boolean move = true;
 
             if(state.rules.waves && unit.team == state.rules.defaultTeam){

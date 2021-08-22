@@ -1,16 +1,19 @@
 package mindustry.entities.units;
 
+import arc.audio.Sound;
 import arc.math.*;
 import arc.math.geom.*;
 import arc.util.*;
 import mindustry.*;
 import mindustry.ai.*;
+import mindustry.content.Fx;
 import mindustry.entities.*;
 import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.payloads.*;
+import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
@@ -43,6 +46,27 @@ public class AIController implements UnitController{
         updateVisuals();
         updateTargeting();
         updateMovement();
+
+        // 6 tiles
+        if(unit != null && target != null && target instanceof CoreBlock.CoreBuild && unit.team() == state.rules.waveTeam && !unit.dead && target.dst(unit) < 6f * tilesize) {
+            float damage = unit.maxHealth / 50f;
+            Damage.damage(target.x(), target.y(), tilesize * 6f, damage);
+
+            Sound soundFx = Sounds.bigshot;
+            Effect hitFx = Fx.blastExplosion;
+            if (damage > 50f) {
+                soundFx = Sounds.explosionbig;
+                hitFx = Fx.reactorExplosion;
+            }
+            if (damage > 125f) {
+                soundFx = Sounds.corexplode;
+                hitFx = Fx.massiveExplosion;
+            }
+            Call.soundAt(soundFx, target.x(), target.y(), Math.max(0.5f, damage / 150f), 1f);
+            Call.effect(hitFx, target.x(), target.y(), Math.max(1f, damage / 100f), state.rules.waveTeam.color);
+
+            unit.kill();
+        }
     }
 
     @Nullable

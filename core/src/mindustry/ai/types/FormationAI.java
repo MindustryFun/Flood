@@ -64,9 +64,11 @@ public class FormationAI extends AIController implements FormationMember{
 
                 if(core != null && leader.mineTile.drop() != null && unit.within(core, unit.type.range) && !unit.acceptsItem(leader.mineTile.drop())){
                     if(core.acceptStack(unit.stack.item, unit.stack.amount, unit) > 0){
+                        /* no no no
                         Call.transferItemTo(unit, unit.stack.item, unit.stack.amount, unit.x, unit.y, core);
 
                         unit.clearItem();
+                         */
                     }
                 }
             }else{
