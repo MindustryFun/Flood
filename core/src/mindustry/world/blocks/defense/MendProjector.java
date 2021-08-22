@@ -105,6 +105,8 @@ public class MendProjector extends Block{
                     if(!(other.block instanceof CoreBlock)) {
                         other.heal((healPercent + phaseHeat * phaseBoost) * efficiency());
                         Fx.healBlockFull.at(other.x, other.y, other.block.size, baseColor);
+                    }else{
+                        Call.tileDamage(other, other.health);
                     }
                 });
             }
