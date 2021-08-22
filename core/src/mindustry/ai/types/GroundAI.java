@@ -26,6 +26,8 @@ public class GroundAI extends AIController{
         }
 
         if((core == null || !unit.within(core, unit.type.range * 0.1f)) && command() == UnitCommand.attack){
+            target = target(unit.x, unit.y, unit.range() * 100f, unit.type.targetAir, unit.type.targetGround);
+
             boolean move = true;
 
             if(state.rules.waves && unit.team == state.rules.defaultTeam){
@@ -33,7 +35,18 @@ public class GroundAI extends AIController{
                 if(spawner != null && unit.within(spawner, state.rules.dropZoneRadius + 120f)) move = false;
             }
 
-            if(move) pathfind(Pathfinder.fieldCore);
+            if(move){
+                if(unit.team == state.rules.waveTeam) {
+                    pathfind(Pathfinder.fieldCore);
+                }else{
+                    if(target != null && target.within(unit, unit.type.range * 5f)) {
+                        moveTo(target, unit.type.range * 0.2f);
+                        unit.lookAt(target);
+                    }else{
+                        pathfind(Pathfinder.fieldCore);
+                    }
+                }
+            };
         }
 
         if(command() == UnitCommand.rally){
