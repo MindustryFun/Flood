@@ -20,7 +20,7 @@ import static mindustry.Vars.*;
 
 public class AIController implements UnitController{
     protected static final Vec2 vec = new Vec2();
-    protected static final int timerTarget = 0, timerTarget2 = 1, timerTarget3 = 2, timerTarget4 = 3;
+    protected static final int timerTarget = 0, timerTarget2 = 1, timerTarget3 = 2, timerTarget4 = 3, timerTarget5 = 4;
 
     protected Unit unit;
     protected Interval timer = new Interval(4);
@@ -129,6 +129,25 @@ public class AIController implements UnitController{
         Tile targetTile = pathfinder.getTargetTile(tile, pathfinder.getField(unit.team, costType, pathTarget));
 
         if(tile == targetTile || (costType == Pathfinder.costNaval && !targetTile.floor().isLiquid)) return;
+
+        unit.movePref(vec.trns(unit.angleTo(targetTile.worldx(), targetTile.worldy()), unit.speed()));
+    }
+
+    public Pathfinder.Flowfield find_path(int pathTarget) {
+        int costType = unit.pathType();
+
+        Tile tile = unit.tileOn();
+        if(tile == null) return null;
+        return pathfinder.getField(unit.team, costType, pathTarget);
+    }
+
+    public void move_with_field(Pathfinder.Flowfield field) {
+        Tile tile = unit.tileOn();
+        if(tile == null) return;
+
+        Tile targetTile = pathfinder.getTargetTile(tile, field);
+
+        if(tile == targetTile) return;
 
         unit.movePref(vec.trns(unit.angleTo(targetTile.worldx(), targetTile.worldy()), unit.speed()));
     }

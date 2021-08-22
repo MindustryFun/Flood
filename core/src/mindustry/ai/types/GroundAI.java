@@ -10,6 +10,12 @@ import mindustry.world.meta.*;
 import static mindustry.Vars.*;
 
 public class GroundAI extends AIController{
+    private Pathfinder.Flowfield path = null;
+
+    @Override
+    public void init() {
+        path = find_path(Pathfinder.fieldCore);
+    }
 
     @Override
     public void updateMovement(){
@@ -37,7 +43,11 @@ public class GroundAI extends AIController{
 
             if(move){
                 if(unit.team == state.rules.waveTeam) {
-                    pathfind(Pathfinder.fieldCore);
+                    if (path != null) {
+                        move_with_field(path);
+                    }else{
+                        path = find_path(Pathfinder.fieldCore);
+                    }
                 }else{
                     if(target != null && target.within(unit, unit.type.range * 5f)) {
                         moveTo(target, unit.type.range * 0.2f);
