@@ -130,9 +130,9 @@ public class TowerDefense {
             if (selection == 0)
                 Call.menu(player.con, 8, "[white]\uF7F1[]", "[accent]Mono Sacrifice[]\n[accent]Monos[] circle the core and sacrifice into it to heal it when it's low HP. This is the only way to heal the core.", tutOptions);
         });
-        Menus.registerMenu(9, (player, selection) -> {
+        Menus.registerMenu(8, (player, selection) -> {
             if (selection == 0)
-                Call.menu(player.con, 10, "[white]\uE88F[]", "[accent]Chat Commands[]\nYou can hide the right side HUD with \n    [accent] - /hud[]\nYou can hide unit drops with \n    [accent] - /drops[]", tutFinal);
+                Call.menu(player.con, 9, "[white]\uE88F[]", "[accent]Chat Commands[]\nYou can hide the right side HUD with \n    [accent] - /hud[]\nYou can hide unit drops with \n    [accent] - /drops[]", tutFinal);
         });
 
         Timer.schedule(() -> {

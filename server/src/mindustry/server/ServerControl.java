@@ -9,6 +9,8 @@ import arc.util.CommandHandler.*;
 import arc.util.Timer.*;
 import arc.util.serialization.*;
 import arc.util.serialization.JsonValue.*;
+import mindustry.Vars;
+import mindustry.ai.Pathfinder;
 import mindustry.core.GameState.*;
 import mindustry.core.*;
 import mindustry.game.EventType.*;
@@ -278,6 +280,12 @@ public class ServerControl implements ApplicationListener{
                     info("  &b&lb " + command.text + (command.paramText.isEmpty() ? "" : " &lc&fi") + command.paramText + "&fr - &lw" + command.description);
                 }
             }
+        });
+
+        handler.register("reset_path", "", "Reset the pathfinding thread", arg -> {
+            pathfinder.stop();
+            pathfinder.start();
+            Log.info("done");
         });
 
         handler.register("version", "Displays server version info.", arg -> {
