@@ -57,6 +57,7 @@ public class Pathfinder implements Runnable{
 
              */
             (team, tile) -> (PathTile.team(tile) == team.id || PathTile.team(tile) == 0) && PathTile.solid(tile) ? impassable : 1 +
+                    (PathTile.solid(tile) ? 5 : 0) +
                     // PathTile.health(tile) 5+
                     (PathTile.nearSolid(tile) ? 2 : 0) +
                     (PathTile.nearLiquid(tile) ? 6 : 0) +
