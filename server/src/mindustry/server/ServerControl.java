@@ -141,6 +141,9 @@ public class ServerControl implements ApplicationListener{
                     err("Argument usage: &lb<command-1> <command1-args...>,<command-2> <command-2-args2...>");
                 }
             }
+
+            // load tower defense mod
+            TowerDefense.init();
         });
 
         customMapDirectory.mkdirs();
@@ -326,8 +329,6 @@ public class ServerControl implements ApplicationListener{
                 result = maps.getShuffleMode().next(preset, state.map);
                 info("Randomized next map to be @.", result.name());
             }
-
-            TowerDefense.init();
 
             info("Loading map...");
 
