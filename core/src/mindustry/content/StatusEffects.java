@@ -112,7 +112,7 @@ public class StatusEffects implements ContentList{
 
         electrified = new StatusEffect("electrified"){{
             color = Pal.heal;
-            speedMultiplier = 0.6f;
+            speedMultiplier = 0.4f;
             reloadMultiplier = 0.6f;
             effect = Fx.electrified;
         }};
