@@ -73,7 +73,7 @@ public class ForceFieldAbility extends Ability{
             checkRadius(unit);
 
             Groups.unit.intersect(unit.x - realRad, unit.y - realRad, realRad * 2f, realRad * 2f, con -> {
-                if (con.team() == state.rules.waveTeam && Intersector.isInsideHexagon(unit.x, unit.y, realRad * 2f, con.x(), con.y())) {
+                if (con.team() == state.rules.waveTeam && unit.team() != state.rules.waveTeam && Intersector.isInsideHexagon(unit.x, unit.y, realRad * 2f, con.x(), con.y())) {
                     if(Mathf.chance(0.01f)) {
                         con.apply(StatusEffects.sapped, 120f);
                         // Call.effect(Fx.sapped, con.x(), con.y(), 1f, Color.yellow);
