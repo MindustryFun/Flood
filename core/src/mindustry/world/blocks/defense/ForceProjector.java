@@ -170,7 +170,7 @@ public class ForceProjector extends Block{
 
             Groups.unit.intersect(x - realRadius, y - realRadius, realRadius * 2f, realRadius * 2f, con -> {
                 if (con.team() == state.rules.waveTeam && Intersector.isInsideHexagon(paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, con.x(), con.y())) {
-                    if(Mathf.chance(0.001f)) {
+                    if(Mathf.chance(0.002f)) { // 0.2% every tick = ~ 12%/s
                         con.apply(StatusEffects.sapped, 120f);
                         // Call.effect(Fx.sapped, con.x(), con.y(), 1f, Color.yellow);
                     }

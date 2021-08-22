@@ -237,6 +237,7 @@ public class Pathfinder implements Runnable{
         }
 
         //if refresh rate is positive, queue a refresh
+        /*
         if(path.refreshRate > 0 && Time.timeSinceMillis(path.lastUpdateTime) > path.refreshRate){
             path.lastUpdateTime = Time.millis();
 
@@ -254,6 +255,7 @@ public class Pathfinder implements Runnable{
                 }
             }
         }
+         */
 
         int[][] values = path.weights;
         int value = values[tile.x][tile.y];
