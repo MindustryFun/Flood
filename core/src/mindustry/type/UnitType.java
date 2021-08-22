@@ -47,8 +47,8 @@ public class UnitType extends UnlockableContent{
     /** Creates a new instance of this unit class. */
     public Prov<? extends Unit> constructor;
     /** The default AI controller to assign on creation. */
-    public Prov<? extends UnitController> defaultController = () -> !flying ? new GroundAI() : new FlyingAI();
-
+    // public Prov<? extends UnitController> defaultController = () -> !flying ? new GroundAI() : new FlyingAI();
+    public Prov<? extends UnitController> defaultController = () -> new FlyingAI();
     /** Environmental flags that are *all* required for this unit to function. 0 = any environment */
     public int envRequired = 0;
     /** The environment flags that this unit can function in. If the env matches any of these, it will be enabled. */
