@@ -273,6 +273,10 @@ public class NetServer implements ApplicationListener{
             }
         });
 
+        clientCommands.<Player>register("tutorial", "", "Start the interactive tutorial", (args, player) -> {
+            Call.menuChoose(player, 1, 0);
+        });
+
         clientCommands.<Player>register("help", "[page]", "Lists all commands.", (args, player) -> {
             if(args.length > 0 && !Strings.canParseInt(args[0])){
                 player.sendMessage("[scarlet]'page' must be a number.");

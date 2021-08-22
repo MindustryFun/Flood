@@ -13,6 +13,7 @@ import mindustry.gen.*;
 import mindustry.net.*;
 import mindustry.type.Item;
 import mindustry.type.ItemStack;
+import mindustry.ui.Menus;
 import mindustry.world.blocks.storage.*;
 
 import java.util.HashMap;
@@ -80,6 +81,58 @@ public class TowerDefense {
         Events.on(EventType.WaveEvent.class, e -> {
             int wave = state.wave;
             state.multiplier = Mathf.clamp(((wave * wave / 5000f) + 0.5f), state.multiplier, 42069f); // if u reach this number u are god
+        });
+
+        Events.on(EventType.PlayerJoin.class, e -> {
+            if(e.player.getInfo().timesJoined <= 1) {
+                String[][] options1 = {
+                        {"[#49e87c]\uE875 Take the tutorial[]"},
+                        {"[#e85e49]⚠ Skip (not recommended)[]"}
+                };
+                Call.menu(e.player.con, 1, "[accent]Welcome![]", "Looks like it's your first time playing..", options1);
+            }
+        });
+
+        String[][] tutOptions = {
+                {"[#49e87c]\uE829 Continue[]"},
+                {"[#e85e49]⚠ Skip[]"}
+        };
+        String[][] tutFinal = {
+                {"[#49e87c]\uE829 Finish[]"},
+                {"[#e85e49]⚠ Skip[]"}
+        };
+
+        Menus.registerMenu(1, (player, selection) -> {
+            if (selection == 0)
+                Call.menu(player.con, 2, "[accent]\uE875[] Tutorial 1/2", "In [accent]\uE86D tower defense[] units [scarlet]cannot[] shoot, they can only explode when they approach the core. Most units follow a fixed path so it is easy to setup defenses against them.", tutOptions);
+        });
+        Menus.registerMenu(2, (player, selection) -> {
+            if (selection == 0)
+                Call.menu(player.con, 3, "[accent]\uE875[] Tutorial 2/2", "You have to kill [accent]\uE86D enemy units[] before they reach your core. You [scarlet]cannot[] deliver any resources to your core, as they will drop as [accent]loot[] from killed foes.", tutOptions);
+        });
+        Menus.registerMenu(3, (player, selection) -> {
+            if (selection == 0)
+                Call.menu(player.con, 4, "[white]\uF848 & \uF790[]", "[accent]Overclock Turrets[]\nInstead of healing, [accent]repair points[] actively boost friendly units' damage & reload speed by 2x.", tutOptions);
+        });
+        Menus.registerMenu(4, (player, selection) -> {
+            if (selection == 0)
+                Call.menu(player.con, 5, "[white]\uF89B & \uF89A[]", "[accent]Elecro Fields[]\nInstead of healing, [accent]menders[] damage & slow down enemies hit by the wave. (good combo with arcs & lancers)", tutOptions);
+        });
+        Menus.registerMenu(5, (player, selection) -> {
+            if (selection == 0)
+                Call.menu(player.con, 6, "[white]\uF898[]", "[accent]Sap Projector[]\n[accent]Force Projectors[] slow down enemies caught in the field & make them take more damage.", tutOptions);
+        });
+        Menus.registerMenu(6, (player, selection) -> {
+            if (selection == 0)
+                Call.menu(player.con, 7, "[white]\uF780[]", "[accent]EMP[]\n[accent]The navanax unit[] shoots deadly EMP missiles that take out your turrets & assembly lines for a short period of time.", tutOptions);
+        });
+        Menus.registerMenu(7, (player, selection) -> {
+            if (selection == 0)
+                Call.menu(player.con, 8, "[white]\uF7F1[]", "[accent]Mono Sacrifice[]\n[accent]Monos[] circle the core and sacrifice into it to heal it when it's low HP. This is the only way to heal the core.", tutOptions);
+        });
+        Menus.registerMenu(9, (player, selection) -> {
+            if (selection == 0)
+                Call.menu(player.con, 10, "[white]\uE88F[]", "[accent]Chat Commands[]\nYou can hide the right side HUD with \n    [accent] - /hud[]\nYou can hide unit drops with \n    [accent] - /drops[]", tutFinal);
         });
 
         Timer.schedule(() -> {
