@@ -106,7 +106,7 @@ public class StatusEffects implements ContentList{
         sapped = new StatusEffect("sapped"){{
             color = Pal.sap;
             healthMultiplier = 0.6f;
-            speedMultiplier = 0.3f;
+            speedMultiplier = 0.5f;
             effect = Fx.sapped;
         }};
 
