@@ -13,6 +13,7 @@ import mindustry.graphics.*;
 import mindustry.logic.*;
 import mindustry.td.TowerDefense;
 import mindustry.world.*;
+import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
@@ -101,8 +102,10 @@ public class MendProjector extends Block{
                 });
 
                 indexer.eachBlock(this, realRange, Building::damaged, other -> {
-                    other.heal((healPercent + phaseHeat * phaseBoost) * efficiency());
-                    Fx.healBlockFull.at(other.x, other.y, other.block.size, baseColor);
+                    if(!(other.block instanceof CoreBlock)) {
+                        other.heal((healPercent + phaseHeat * phaseBoost) * efficiency());
+                        Fx.healBlockFull.at(other.x, other.y, other.block.size, baseColor);
+                    }
                 });
             }
         }
