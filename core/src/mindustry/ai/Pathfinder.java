@@ -49,10 +49,20 @@ public class Pathfinder implements Runnable{
             (PathTile.damages(tile) ? 30 : 0),
 
         //legs
+            /*
         (team, tile) -> PathTile.legSolid(tile) ? impassable : 1 +
             (!PathTile.isDarkPanel5(tile) ? 6000 : 0) +
             (!PathTile.isDarkPanel4(tile) ? 30 : 0) +
             (PathTile.solid(tile) ? 5 : 0),
+
+             */
+            (team, tile) -> (PathTile.team(tile) == team.id || PathTile.team(tile) == 0) && PathTile.solid(tile) ? impassable : 1 +
+                    // PathTile.health(tile) 5+
+                    (PathTile.nearSolid(tile) ? 2 : 0) +
+                    (PathTile.nearLiquid(tile) ? 6 : 0) +
+                    (PathTile.deep(tile) || !PathTile.isDarkPanel5(tile) ? 6000 : 0) +
+                    (!PathTile.isDarkPanel4(tile) ? 30 : 0) +
+                    (PathTile.damages(tile) ? 30 : 0),
 
         //water
         (team, tile) -> !PathTile.liquid(tile) ? 200 : 2 +
