@@ -444,7 +444,7 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
                 elevation = 1f;
             }else if(!net.client()){
                 if(team == state.rules.waveTeam && tile.build != null && tile.team() != state.rules.waveTeam) {
-                    damage(tile.build.health / 10f);
+                    damage(tile.build.health);
                     tile.build.damage(maxHealth);
                 } else {
                     kill();
