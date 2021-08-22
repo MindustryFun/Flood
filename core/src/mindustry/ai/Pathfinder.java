@@ -50,6 +50,8 @@ public class Pathfinder implements Runnable{
 
         //legs
         (team, tile) -> PathTile.legSolid(tile) ? impassable : 1 +
+            (!PathTile.isDarkPanel5(tile) ? 6000 : 0) +
+            (!PathTile.isDarkPanel4(tile) ? 30 : 0) +
             (PathTile.solid(tile) ? 5 : 0),
 
         //water
