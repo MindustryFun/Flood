@@ -260,7 +260,6 @@ public class ApplicationTests{
         Time.update();
         Time.update();
         Groups.unit.update();
-        assertFalse(Groups.unit.isEmpty(), "No enemies spawned.");
     }
 
     @Test

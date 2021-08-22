@@ -50,7 +50,7 @@ public class UnitDrops {
 
 
         // New ships retusa, oxynoe, cyerce, aegires, navanax
-        UnitTypes.aegires, ItemStack.with(Items.copper, 8, Items.lead, 2, Items.scrap, 8),
+        UnitTypes.retusa, ItemStack.with(Items.copper, 8, Items.lead, 2, Items.scrap, 8),
         UnitTypes.oxynoe, ItemStack.with(Items.copper, 12, Items.lead, 4, Items.scrap, 16, Items.silicon, 8, Items.plastanium, 2),
         UnitTypes.cyerce, ItemStack.with(Items.lead, 23, Items.metaglass, 27, Items.scrap, 86, Items.phaseFabric, 2, Items.thorium, 4),
         UnitTypes.aegires, ItemStack.with(Items.silicon, 47, Items.phaseFabric, 8, Items.surgeAlloy, 4, Items.plastanium, 18, Items.thorium, 18),
