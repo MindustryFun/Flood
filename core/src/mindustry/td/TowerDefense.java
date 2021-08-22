@@ -53,7 +53,7 @@ public class TowerDefense {
             if (player == null) return true;
 
             if(action.type == Administration.ActionType.placeBlock){
-                boolean b = (action.tile.floor() != Blocks.darkPanel4 && action.tile.floor() != Blocks.darkPanel5) || action.block == Blocks.shockMine;
+                boolean b = (action.tile.floor() != Blocks.darkPanel4 && action.tile.floor() != Blocks.darkPanel5) || action.block == Blocks.shockMine || action.block instanceof CoreBlock;
                 if(!b && player.con != null) Call.label(player.con, "[scarlet]\uE868", 4f, action.tile.worldx(), action.tile.worldy());
                 return b;
             }
