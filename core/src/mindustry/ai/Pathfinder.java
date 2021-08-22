@@ -41,7 +41,7 @@ public class Pathfinder implements Runnable{
     public static final Seq<PathCost> costTypes = Seq.with(
         //ground
         (team, tile) -> (PathTile.team(tile) == team.id || PathTile.team(tile) == 0) && PathTile.solid(tile) ? impassable : 1 +
-            PathTile.health(tile) * 5 +
+            // PathTile.health(tile) 5+
             (PathTile.nearSolid(tile) ? 2 : 0) +
             (PathTile.nearLiquid(tile) ? 6 : 0) +
             (PathTile.deep(tile) || !PathTile.isDarkPanel5(tile) ? 6000 : 0) +
