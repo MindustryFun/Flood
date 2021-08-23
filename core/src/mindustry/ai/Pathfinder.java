@@ -195,7 +195,9 @@ public class Pathfinder implements Runnable{
 
         queue.post(() -> {
             for(Flowfield data : threadList){
-                updateTargets(data, x, y);
+                if(data.team != state.rules.waveTeam || force) {
+                    updateTargets(data, x, y);
+                }
             }
         });
     }
