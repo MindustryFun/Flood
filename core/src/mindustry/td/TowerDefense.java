@@ -114,7 +114,7 @@ public class TowerDefense {
         };
 
         for(int i = 0; i < tutEntries.length / 2; i++){
-            int j = i;
+            final int j = i;
             Menus.registerMenu(i + 1, (player, selection) -> {
                 if(selection == 0)
                     Call.menu(player.con, j + 2, tutEntries[2 * j], tutEntries[2 * j + 1], j == tutEntries.length / 2 - 1 ? tutFinal : tutOptions);
