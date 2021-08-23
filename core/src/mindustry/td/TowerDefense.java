@@ -14,7 +14,10 @@ import mindustry.net.*;
 import mindustry.type.Item;
 import mindustry.type.ItemStack;
 import mindustry.ui.Menus;
+import mindustry.world.*;
+import mindustry.world.blocks.ConstructBlock.*;
 import mindustry.world.blocks.storage.*;
+import mindustry.world.blocks.units.*;
 
 import java.util.HashMap;
 
@@ -53,7 +56,7 @@ public class TowerDefense {
             if (player == null) return true;
 
             if(action.type == Administration.ActionType.placeBlock){
-                boolean b = (action.tile.floor() != Blocks.darkPanel4 && action.tile.floor() != Blocks.darkPanel5) || action.block == Blocks.shockMine || action.block instanceof CoreBlock;
+                boolean b = action.block == Blocks.shockMine || action.block instanceof CoreBlock || checkPlacement(action.tile, action.block);
                 if(!b && player.con != null) Call.label(player.con, "[scarlet]\uE868", 4f, action.tile.worldx(), action.tile.worldy());
                 return b;
             }
@@ -186,4 +189,19 @@ public class TowerDefense {
         Log.info("TowerDefense inited");
     }
 
+    public static boolean checkPlacement(Tile tile, Block block){
+        int offsetx = -(block.size - 1) / 2;
+        int offsety = -(block.size - 1) / 2;
+
+        for(int dx = 0; dx < block.size; dx++){
+            for(int dy = 0; dy < block.size; dy++){
+                int wx = dx + offsetx + tile.x, wy = dy + offsety + tile.y;
+
+                Tile check = world.tile(wx, wy);
+
+                if (check.floor() == Blocks.darkPanel4 || check.floor() == Blocks.darkPanel5) return false;
+            }
+        }
+        return true;
+    }
 }
