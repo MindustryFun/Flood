@@ -2,9 +2,7 @@ package mindustry.td;
 
 import arc.Events;
 import arc.math.Mathf;
-import arc.util.Log;
-import arc.util.Strings;
-import arc.util.Timer;
+import arc.util.*;
 import mindustry.*;
 import mindustry.content.*;
 import mindustry.entities.units.AIController;
@@ -21,7 +19,7 @@ import mindustry.world.blocks.units.*;
 
 import java.util.HashMap;
 
-import static mindustry.Vars.state;
+import static mindustry.Vars.*;
 
 public class TowerDefense {
 
