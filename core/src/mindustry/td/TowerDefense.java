@@ -100,14 +100,8 @@ public class TowerDefense {
             }
         });
 
-        String[][] tutOptions = {
-                {"[#49e87c]\uE829 Continue[]"},
-                {"[#e85e49]⚠ Skip[]"}
-        };
-        String[][] tutFinal = {
-                {"[#49e87c]\uE829 Finish[]"},
-                {"[#e85e49]⚠ Skip[]"}
-        };
+        String[][] tutOptions = {{"[#49e87c]\uE829 Continue[]"}};
+        String[][] tutFinal = {{"[#49e87c]\uE829 Finish[]"}};
 
         Menus.registerMenu(1, (player, selection) -> {
             if (selection == 0)
