@@ -77,6 +77,12 @@ public class TowerDefense {
             e.unit.damageMultiplier = 0f;
         });
 
+        Events.on(EventType.UnitCreateEvent.class, e -> {
+            if(e.unit.team() != state.rules.defaultTeam || e.unit.isPlayer() || !(e.spawner.block instanceof Reconstructor || e.spawner.block instanceof UnitFactory)) return;
+            float deathTime = state.rules.unitBuildSpeed(e.unit.team) * (e.spawner.block instanceof Reconstructor ? ((Reconstructor)e.spawner.block).constructTime : 60 * 5f);
+            Timer.schedule (e.unit::kill, deathTime);
+        });
+
         Events.on(EventType.WorldLoadEvent.class, e -> {
             state.multiplier = 1f;
         });
