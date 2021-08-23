@@ -43,7 +43,7 @@ public class EmpBulletType extends BasicBulletType{
                     if(other.power != null && other.power.graph.getLastPowerProduced() > 0f){
                         other.timeScale = Math.min(other.timeScale, powerSclDecrease);
                         other.timeScaleDuration = timeDuration;
-                        other.damage(damage * powerDamageScl);
+                        // other.damage(damage * powerDamageScl);
                         hitPowerEffect.at(other.x, other.y, b.angleTo(other), hitColor);
                         chainEffect.at(x, y, 0, hitColor, other);
                     }
