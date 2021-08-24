@@ -139,9 +139,9 @@ public class EnergyFieldAbility extends Ability{
                 }else{
                     anyNearby = true;
                     if(other instanceof Building b){
-                        b.damage(unit.team, damage);
+                        b.damage(unit.team, damage * unit.damageMultiplier);
                     }else{
-                        other.damage(damage);
+                        other.damage(damage * unit.damageMultiplier);
                     }
                     if(other instanceof Statusc s){
                         s.apply(status, statusDuration);

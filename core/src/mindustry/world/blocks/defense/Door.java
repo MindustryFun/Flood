@@ -44,7 +44,7 @@ public class Door extends Wall{
                 }
 
                 entity.open = open;
-                pathfinder.updateTile(entity.tile());
+                // pathfinder.updateTile(entity.tile());
                 entity.effect();
             }
         });

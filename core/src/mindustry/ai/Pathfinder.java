@@ -45,8 +45,7 @@ public class Pathfinder implements Runnable{
             (PathTile.nearSolid(tile) ? 2 : 0) +
             (PathTile.nearLiquid(tile) ? 6 : 0) +
             (PathTile.deep(tile) || !PathTile.isDarkPanel5(tile) ? 6000 : 0) +
-                (!PathTile.isDarkPanel4(tile) ? 30 : 0) +
-            (PathTile.damages(tile) ? 30 : 0),
+            (PathTile.damages(tile) || !PathTile.isDarkPanel4(tile)? 30 : 0),
 
         //legs
             /*
@@ -113,7 +112,12 @@ public class Pathfinder implements Runnable{
 
         Events.on(ResetEvent.class, event -> stop());
 
-        Events.on(TileChangeEvent.class, event -> updateTile(event.tile));
+        Events.on(TileChangeEvent.class, event -> updateTile(event.tile, false));
+        Events.on(BlockDestroyEvent.class, event -> {
+            if (event.tile.block() instanceof CoreBlock) {
+                Core.app.post(() -> updateTile(event.tile, true));
+            }
+        });
     }
 
     private void clearCache(){
@@ -168,7 +172,7 @@ public class Pathfinder implements Runnable{
 
     /** Update a tile in the internal pathfinding grid.
      * Causes a complete pathfinding recalculation. Main thread only. */
-    public void updateTile(Tile tile){
+    public void updateTile(Tile tile, boolean force){
         if(net.client()) return;
 
         int x = tile.x, y = tile.y;
@@ -181,7 +185,7 @@ public class Pathfinder implements Runnable{
 
         //can't iterate through array so use the map, which should not lead to problems
         for(Flowfield path : mainList){
-            if(path != null){
+            if(path != null && (path.team != state.rules.waveTeam || force)){
                 synchronized(path.targets){
                     path.targets.clear();
                     path.getPositions(path.targets);
@@ -191,7 +195,9 @@ public class Pathfinder implements Runnable{
 
         queue.post(() -> {
             for(Flowfield data : threadList){
-                updateTargets(data, x, y);
+                if(data.team != state.rules.waveTeam || force) {
+                    updateTargets(data, x, y);
+                }
             }
         });
     }
@@ -248,7 +254,7 @@ public class Pathfinder implements Runnable{
         }
 
         //if refresh rate is positive, queue a refresh
-        /*
+
         if(path.refreshRate > 0 && Time.timeSinceMillis(path.lastUpdateTime) > path.refreshRate){
             path.lastUpdateTime = Time.millis();
 
@@ -266,7 +272,7 @@ public class Pathfinder implements Runnable{
                 }
             }
         }
-         */
+
 
         int[][] values = path.weights;
         int value = values[tile.x][tile.y];
