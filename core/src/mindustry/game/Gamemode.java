@@ -11,6 +11,12 @@ public enum Gamemode{
         rules.waveTimer = true;
         rules.waves = true;
     }, map -> map.spawns > 0),
+    defense(rules -> {
+        rules.unitAmmo = true;
+        rules.defenseMode = true;
+        rules.waveTimer = true;
+        rules.waves = true;
+    }, map -> map.spawns > 0),
     sandbox(rules -> {
         rules.infiniteResources = true;
         rules.waves = true;
