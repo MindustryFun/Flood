@@ -282,7 +282,7 @@ public class ServerControl implements ApplicationListener{
             }
         });
 
-        handler.register("reset_path", "", "Reset the pathfinding thread", arg -> {
+        handler.register("reset_path",  "Reset the pathfinding thread", arg -> {
             pathfinder.stop();
             pathfinder.start();
             Log.info("done");
