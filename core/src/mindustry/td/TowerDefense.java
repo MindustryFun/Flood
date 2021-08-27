@@ -6,6 +6,7 @@ import arc.util.Log;
 import arc.util.Strings;
 import arc.util.Timer;
 import mindustry.*;
+import mindustry.ai.WaveSpawner;
 import mindustry.content.*;
 import mindustry.entities.units.AIController;
 import mindustry.game.EventType;
@@ -14,15 +15,19 @@ import mindustry.net.*;
 import mindustry.type.Item;
 import mindustry.type.ItemStack;
 import mindustry.ui.Menus;
+import mindustry.world.Tile;
+import mindustry.world.blocks.payloads.PayloadVoid;
 import mindustry.world.blocks.storage.*;
 
 import java.util.HashMap;
 
 import static mindustry.Vars.state;
+import static mindustry.Vars.world;
 
 public class TowerDefense {
 
     public static HashMap<Item, String> itemIcons = new HashMap<>();
+    public static HashMap<PayloadVoid.PayloadVoidBuild, Tile> payloadPaths = new HashMap<>();
 
     static String getTrafficlightColor(double value){
         return "#"+Integer.toHexString(java.awt.Color.HSBtoRGB((float)value/3f, 1f, 1f)).substring(2);
@@ -75,8 +80,40 @@ public class TowerDefense {
         });
 
         Events.on(EventType.WorldLoadEvent.class, e -> {
+            Log.info("WorldLoadEvent");
             state.multiplier = 1f;
+
+            // let everything settle down first
+            Timer.schedule(() -> {
+
+                // generate payloadVoid <-> closestSpawn paths
+                payloadPaths.clear();
+
+                for(Building build : Groups.build) {
+                    if(build != null && build instanceof PayloadVoid.PayloadVoidBuild) {
+                        // find shortest path to closest spawner
+                        Tile shortest = Vars.spawner.getFirstSpawn();
+                        for(Tile spawn : Vars.spawner.getSpawns()){
+                            if(spawn != null && spawn.dst(build) < shortest.dst(build)) {
+                                shortest = build.tile;
+                            }
+                        }
+
+                        Log.info(build.x + ", " + build.y + " <-> " + shortest.x + ", " + shortest.y);
+
+                        payloadPaths.put((PayloadVoid.PayloadVoidBuild) build, shortest);
+                    }
+                }
+            }, 1f);
         });
+
+        Timer.schedule(() -> {
+            for(Building build : payloadPaths.keySet()) {
+                if(build != null) {
+                    Call.label("[#" + state.rules.waveTeam.color + "]\uE86D [#f64237]\uE861", 30f, build.x, build.y);
+                }
+            }
+        }, 0, 30f);
 
         Events.on(EventType.WaveEvent.class, e -> {
             int wave = state.wave;
