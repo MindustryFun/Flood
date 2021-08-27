@@ -17,6 +17,7 @@ import mindustry.type.ItemStack;
 import mindustry.ui.Menus;
 import mindustry.world.*;
 import mindustry.world.blocks.ConstructBlock.*;
+import mindustry.world.blocks.payloads.*;
 import mindustry.world.blocks.storage.*;
 import mindustry.world.blocks.units.*;
 
