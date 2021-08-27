@@ -106,6 +106,7 @@ public class TowerDefense {
         "[white]\uF898[]", "[accent]Sap Projector[]\n[accent]Force Projectors[] slow down enemies caught in the field & make them take more damage.",
         "[white]\uF780[]", "[accent]EMP[]\n[accent]The navanax unit[] shoots deadly EMP missiles that take out your turrets & assembly lines for a short period of time.",
         "[white]\uF7F1[]", "[accent]Mono Sacrifice[]\n[accent]Monos[] circle the core and sacrifice into it to heal it when it's low HP. This is the only way to heal the core.",
+        "[white]\uF7AF[]", "[accent]Ammo[]\nUnits require ammo to shoot. Be sure to build ammo reload points around defenses!.",
         "[white]\uE88F[]", "[accent]Chat Commands[]\nYou can hide the right side HUD with \n    [accent] - /hud[]\nYou can hide unit drops with \n    [accent] - /drops[]"
         };
 
