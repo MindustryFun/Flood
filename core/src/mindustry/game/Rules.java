@@ -116,7 +116,7 @@ public class Rules{
     /** color of clouds that is displayed when the player is landing */
     public Color cloudColor = new Color(0f, 0f, 0f, 0f);
     /** name of the custom mode that this ruleset describes, or null. */
-    public @Nullable String modeName;
+    public @Nullable String modeName = "Defense";
     /** Whether cores incinerate items when full, just like in the campaign. */
     public boolean coreIncinerates = false;
     /** special tags for additional info. */
