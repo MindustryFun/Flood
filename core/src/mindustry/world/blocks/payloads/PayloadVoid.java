@@ -2,10 +2,17 @@ package mindustry.world.blocks.payloads;
 
 import arc.audio.*;
 import arc.graphics.g2d.*;
+import arc.util.Timer;
+import mindustry.Vars;
 import mindustry.content.*;
 import mindustry.entities.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
+import mindustry.td.TowerDefense;
+import mindustry.type.UnitType;
+import mindustry.world.Tile;
+
+import static mindustry.content.Blocks.payloadPropulsionTower;
 
 public class PayloadVoid extends PayloadBlock{
     public Effect incinerateEffect = Fx.blastExplosion;
@@ -56,6 +63,26 @@ public class PayloadVoid extends PayloadBlock{
         @Override
         public void updateTile(){
             if(moveInPayload(false) && cons.valid()){
+                if(payload instanceof UnitPayload) {
+                    // send to closest spawn
+                    Tile sendTo = TowerDefense.payloadPaths.get(this);
+                    if(sendTo != null) {
+                        UnitType ut = ((UnitPayload) payload).unit.type;
+
+                        Call.soundAt(Sounds.shootBig, x, y, 1, 1);
+
+                        float lifetimeScl = dst(sendTo) / Bullets.artilleryPlasticFrag.lifetime / Bullets.artilleryPlasticFrag.speed;
+                        Call.createBullet(Bullets.artilleryPlasticFrag, team(), x, y, angleTo(sendTo), 0f, 1f, lifetimeScl); // ? ? ?
+
+                        Timer.schedule(() -> {
+                            if(sendTo != null) {
+                                Unit waveUnit = ut.create(Vars.state.rules.waveTeam);
+                                waveUnit.set(sendTo);
+                                waveUnit.add();
+                            }
+                        }, lifetimeScl * Bullets.artilleryPlasticFrag.lifetime / 60f);
+                    }
+                }
                 payload = null;
                 incinerateEffect.at(this);
                 incinerateSound.at(this);

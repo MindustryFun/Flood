@@ -437,6 +437,11 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
             }
         }
 
+        //kill entities on space floor
+        if(floor == Blocks.space) {
+            kill();
+        }
+
         //kill entities on tiles that are solid to them
         if(tile != null && !canPassOn()){
             //boost if possible
