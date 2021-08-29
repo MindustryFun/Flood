@@ -90,7 +90,8 @@ public class WaveSpawner{
                     }
                 });
 
-            }else{
+            }
+            else{
                 float spread = tilesize * 2;
 
                 eachGroundSpawn((spawnX, spawnY, doShockwave) -> {
@@ -99,8 +100,14 @@ public class WaveSpawner{
                         Tmp.v1.rnd(spread);
 
                         Unit unit = group.createUnit(state.rules.waveTeam, state.wave - 1);
+                        Tile on = world.tileWorld(spawnX, spawnY);
+
                         unit.set(spawnX + Tmp.v1.x, spawnY + Tmp.v1.y);
                         spawnEffect(unit);
+
+                        if(!(unit instanceof WaterMovec) && on != null && on.floor().isDeep()) {
+                            unit.remove();
+                        }
                     }
                 });
             }
