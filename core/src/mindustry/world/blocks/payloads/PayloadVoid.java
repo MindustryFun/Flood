@@ -1,11 +1,13 @@
 package mindustry.world.blocks.payloads;
 
+import arc.Events;
 import arc.audio.*;
 import arc.graphics.g2d.*;
 import arc.util.Timer;
 import mindustry.Vars;
 import mindustry.content.*;
 import mindustry.entities.*;
+import mindustry.game.EventType;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.td.TowerDefense;
@@ -77,6 +79,7 @@ public class PayloadVoid extends PayloadBlock{
                         Timer.schedule(() -> {
                             if(sendTo != null) {
                                 Unit waveUnit = ut.create(Vars.state.rules.waveTeam);
+                                Events.fire(new EventType.UnitSpawnEvent(waveUnit));
                                 waveUnit.set(sendTo);
                                 waveUnit.add();
                             }
