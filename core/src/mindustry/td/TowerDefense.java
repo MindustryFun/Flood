@@ -118,7 +118,7 @@ public class TowerDefense {
 
         Events.on(EventType.WaveEvent.class, e -> {
             int wave = state.wave;
-            state.multiplier = Mathf.clamp(((wave * wave / 1000f) + 0.5f), state.multiplier, 42069f); // if u reach this number u are god
+            state.multiplier = Mathf.clamp(((wave * wave / 3175f) + 0.5f), state.multiplier, 42069f); // if u reach this number u are god
         });
 
         Events.on(EventType.PlayerJoin.class, e -> {
