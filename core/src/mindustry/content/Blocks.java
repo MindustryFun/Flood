@@ -2097,7 +2097,7 @@ public class Blocks implements ContentList{
         payloadVoid = new PayloadVoid("payload-void"){{
             requirements(Category.units, BuildVisibility.sandboxOnly, with());
             size = 5;
-            health = Integer.MAX_VALUE;
+            health = 5000000;
             destructible = false;
             breakable = false;
         }};
