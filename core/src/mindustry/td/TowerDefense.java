@@ -1,28 +1,22 @@
 package mindustry.td;
 
 import arc.*;
-import arc.math.Mathf;
+import arc.math.*;
+import arc.util.Timer;
 import arc.util.*;
-import arc.util.serialization.*;
 import mindustry.*;
-import mindustry.ai.Pathfinder;
-import mindustry.ai.WaveSpawner;
 import mindustry.content.*;
-import mindustry.entities.units.AIController;
-import mindustry.game.EventType;
+import mindustry.entities.units.*;
+import mindustry.game.*;
 import mindustry.gen.*;
-import mindustry.io.*;
 import mindustry.net.*;
-import mindustry.type.Item;
-import mindustry.type.ItemStack;
-import mindustry.ui.Menus;
+import mindustry.type.*;
+import mindustry.ui.*;
 import mindustry.world.*;
-import mindustry.world.blocks.ConstructBlock.*;
 import mindustry.world.blocks.payloads.*;
 import mindustry.world.blocks.storage.*;
-import mindustry.world.blocks.units.*;
 
-import java.util.HashMap;
+import java.util.*;
 
 import static mindustry.Vars.*;
 
