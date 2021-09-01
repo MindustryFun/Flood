@@ -193,7 +193,7 @@ public class TowerDefense {
 
                     if(item != null) {
                         // Call.sendMessage(item.name + " -> " + item.emoji()); // debug
-                        int calc = Mathf.random(amount - amount / 2, amount + amount / 2); // todo: remove RNG maybe? - not good with pvp
+                        int calc = state.rules.pvp ? amount : Mathf.random(amount - amount / 2, amount + amount / 2);
                         message.append("[accent]+").append(calc).append("[] ").append(itemIcons.getOrDefault(item, "[scarlet]?[]")).append("  ");
                         amount = core.tile.build.acceptStack(item, calc, core);
                         if (amount > 0) {
