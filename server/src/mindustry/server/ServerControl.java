@@ -65,6 +65,9 @@ public class ServerControl implements ApplicationListener{
     }
 
     protected void setup(String[] args){
+        // load tower defense mod
+        TowerDefense.init();
+        
         Core.settings.defaults(
             "bans", "",
             "admins", "",
@@ -143,9 +146,6 @@ public class ServerControl implements ApplicationListener{
                     err("Argument usage: &lb<command-1> <command1-args...>,<command-2> <command-2-args2...>");
                 }
             }
-
-            // load tower defense mod
-            TowerDefense.init();
         });
 
         customMapDirectory.mkdirs();

@@ -25,6 +25,10 @@ abstract class BoundedComp implements Velc, Posc, Healthc, Flyingc{
             if(x > world.unitWidth()) dx -= (x - world.unitWidth())/warpDst;
             if(y > world.unitHeight()) dy -= (y - world.unitHeight())/warpDst;
 
+            if((dx != 0f || dy != 0f)) {
+                damage(maxHealth() / 60);
+            }
+
             velAddNet(dx * Time.delta, dy * Time.delta);
         }
 

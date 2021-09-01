@@ -5,6 +5,7 @@ import arc.math.Mathf;
 import arc.util.*;
 import arc.util.serialization.*;
 import mindustry.*;
+import mindustry.ai.Pathfinder;
 import mindustry.ai.WaveSpawner;
 import mindustry.content.*;
 import mindustry.entities.units.AIController;
@@ -64,6 +65,9 @@ public class TowerDefense {
                 return b;
             }
 
+            if(action.type == Administration.ActionType.breakBlock && action.block instanceof PayloadVoid)
+                return false;
+
             if ((action.type == Administration.ActionType.depositItem || action.type == Administration.ActionType.withdrawItem) && action.tile != null && action.tile.block() != null && action.tile.block() instanceof CoreBlock) {
                 if (player.con != null)
                     Call.label(player.con, "[scarlet]\uE868", 4f, action.tile.worldx(), action.tile.worldy());
@@ -76,7 +80,11 @@ public class TowerDefense {
         // Disable enemy attacks, navanax have an exception to allow for their EMP to be fired
         // TODO: Maybe instead of the navanax check below, we can use Call.createBullet to spawn the EMP instead?
         Events.on(EventType.UnitSpawnEvent.class, e -> {
-            if (e.unit.team() == state.rules.waveTeam && e.unit.type() != UnitTypes.navanax) e.unit.apply(StatusEffects.disarmed, Float.MAX_VALUE);
+            if (e.unit.team() == state.rules.waveTeam && e.unit.type() != UnitTypes.navanax) {
+                e.unit.maxHealth = e.unit.maxHealth * state.multiplier;
+                e.unit.health = e.unit.maxHealth;
+                e.unit.apply(StatusEffects.disarmed, Float.MAX_VALUE);
+            };
             e.unit.damageMultiplier = 0f;
         });
 
@@ -93,14 +101,22 @@ public class TowerDefense {
                 for(Building build : Groups.build) {
                     if(build != null && build instanceof PayloadVoid.PayloadVoidBuild) {
                         // find shortest path to closest spawner
-                        Tile shortest = Vars.spawner.getFirstSpawn();
+                        Tile shortest = Vars.spawner.getSpawns().first();
                         for(Tile spawn : Vars.spawner.getSpawns()){
+                            /*
+                                    int costType = unit.pathType();
+
+        Tile tile = unit.tileOn();
+        if(tile == null) return null;
+        return pathfinder.getField(unit.team, costType, pathTarget);
+                             */
+
                             if(spawn != null && spawn.dst(build) < shortest.dst(build)) {
-                                shortest = build.tile;
+                                shortest = spawn;
                             }
                         }
 
-                        Log.info(build.x + ", " + build.y + " <-> " + shortest.x + ", " + shortest.y);
+                        Log.info(build.tile.x + ", " + build.tile.y + " <-> " + shortest.x + ", " + shortest.y);
 
                         payloadPaths.put((PayloadVoid.PayloadVoidBuild) build, shortest);
                     }
