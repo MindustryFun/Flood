@@ -98,11 +98,11 @@ public class TowerDefense {
                         Tile shortest = Vars.spawner.getSpawns().first();
                         for(Tile spawn : Vars.spawner.getSpawns()){
                             /*
-                                    int costType = unit.pathType();
+                            int costType = unit.pathType();
 
-        Tile tile = unit.tileOn();
-        if(tile == null) return null;
-        return pathfinder.getField(unit.team, costType, pathTarget);
+                            Tile tile = unit.tileOn();
+                            if(tile == null) return null;
+                            return pathfinder.getField(unit.team, costType, pathTarget);
                              */
 
                             if(spawn != null && spawn.dst(build) < shortest.dst(build)) {
