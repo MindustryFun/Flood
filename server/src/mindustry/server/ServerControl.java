@@ -76,9 +76,9 @@ public class ServerControl implements ApplicationListener{
         Config.debug.set(Config.debug.bool());
 
         try{
-            lastMode = Gamemode.valueOf(Core.settings.getString("lastServerMode", "survival"));
+            lastMode = Gamemode.valueOf(Core.settings.getString("lastServerMode", "defense"));
         }catch(Exception e){ //handle enum parse exception
-            lastMode = Gamemode.survival;
+            lastMode = Gamemode.defense;
         }
 
         logger = (level1, text) -> {
