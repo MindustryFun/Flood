@@ -82,21 +82,16 @@ public class TowerDefense {
             e.unit.damageMultiplier = 0f;
         });
 
-        Events.on(EventType.WorldLoadEvent.class, e -> {
-            Log.info("WorldLoadEvent");
-            state.multiplier = 1f;
+        Events.on(EventType.PlayEvent.class, e -> {
+            // generate payloadVoid <-> closestSpawn paths
+            payloadPaths.clear();
 
-            // let everything settle down first
-            Timer.schedule(() -> {
-
-                // generate payloadVoid <-> closestSpawn paths
-                payloadPaths.clear();
-
-                for(Building build : Groups.build) {
-                    if(build instanceof PayloadVoid.PayloadVoidBuild) {
-                        // find shortest path to closest spawner
-                        Tile shortest = Vars.spawner.getSpawns().first();
-                        for(Tile spawn : Vars.spawner.getSpawns()){
+            Log.debug("Void paths:");
+            for(Building build : Groups.build) {
+                if(build instanceof PayloadVoid.PayloadVoidBuild) {
+                    // find shortest path to closest spawner
+                    Tile shortest = Vars.spawner.getSpawns().first();
+                    for(Tile spawn : Vars.spawner.getSpawns()){
                             /*
                             int costType = unit.pathType();
 
@@ -105,17 +100,20 @@ public class TowerDefense {
                             return pathfinder.getField(unit.team, costType, pathTarget);
                              */
 
-                            if(spawn != null && spawn.dst(build) < shortest.dst(build)) {
-                                shortest = spawn;
-                            }
+                        if(spawn != null && spawn.dst(build) < shortest.dst(build)) {
+                            shortest = spawn;
                         }
-
-                        Log.info(build.tile.x + ", " + build.tile.y + " <-> " + shortest.x + ", " + shortest.y);
-
-                        payloadPaths.put((PayloadVoid.PayloadVoidBuild) build, shortest);
                     }
+
+                    Log.debug("(" + build.tile.x + ", " + build.tile.y + ") <-> (" + shortest.x + ", " + shortest.y + ")");
+
+                    payloadPaths.put((PayloadVoid.PayloadVoidBuild) build, shortest);
                 }
-            }, 1f);
+            }
+        });
+
+        Events.on(EventType.WorldLoadEvent.class, e -> {
+            state.multiplier = 1f;
         });
 
         Timer.schedule(() -> {
