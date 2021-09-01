@@ -246,6 +246,7 @@ public class ServerControl implements ApplicationListener{
             try{
                 JsonValue value = JsonIO.json.fromJson(null, Core.settings.getString("globalrules"));
                 JsonIO.json.readFields(state.rules, value);
+                Call.setRules(state.rules);
             }catch(Throwable t){
                 err("Error applying custom rules, proceeding without them.", t);
             }
