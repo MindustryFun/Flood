@@ -93,7 +93,7 @@ public class TowerDefense {
                 payloadPaths.clear();
 
                 for(Building build : Groups.build) {
-                    if(build != null && build instanceof PayloadVoid.PayloadVoidBuild) {
+                    if(build instanceof PayloadVoid.PayloadVoidBuild) {
                         // find shortest path to closest spawner
                         Tile shortest = Vars.spawner.getSpawns().first();
                         for(Tile spawn : Vars.spawner.getSpawns()){
