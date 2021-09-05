@@ -32,6 +32,8 @@ public class Rules{
     public boolean waitEnemies = false;
     /** Determinates if gamemode is attack mode. */
     public boolean attackMode = false;
+    /** Determinates if gamemode is tower defense mode. */
+    public boolean defenseMode = false;
     /** Whether this is the editor gamemode. */
     public boolean editor = false;
     /** Whether a gameover can happen at all. Set this to false to implement custom gameover conditions. */
@@ -114,7 +116,7 @@ public class Rules{
     /** color of clouds that is displayed when the player is landing */
     public Color cloudColor = new Color(0f, 0f, 0f, 0f);
     /** name of the custom mode that this ruleset describes, or null. */
-    public @Nullable String modeName;
+    public @Nullable String modeName = "Defense";
     /** Whether cores incinerate items when full, just like in the campaign. */
     public boolean coreIncinerates = false;
     /** special tags for additional info. */
@@ -131,6 +133,8 @@ public class Rules{
             return Gamemode.pvp;
         }else if(editor){
             return Gamemode.editor;
+        }else if(defenseMode){
+            return Gamemode.defense;
         }else if(attackMode){
             return Gamemode.attack;
         }else if(infiniteResources){

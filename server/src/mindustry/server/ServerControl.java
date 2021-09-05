@@ -79,9 +79,9 @@ public class ServerControl implements ApplicationListener{
         Config.debug.set(Config.debug.bool());
 
         try{
-            lastMode = Gamemode.valueOf(Core.settings.getString("lastServerMode", "survival"));
+            lastMode = Gamemode.valueOf(Core.settings.getString("lastServerMode", "defense"));
         }catch(Exception e){ //handle enum parse exception
-            lastMode = Gamemode.survival;
+            lastMode = Gamemode.defense;
         }
 
         logger = (level1, text) -> {
@@ -246,6 +246,7 @@ public class ServerControl implements ApplicationListener{
             try{
                 JsonValue value = JsonIO.json.fromJson(null, Core.settings.getString("globalrules"));
                 JsonIO.json.readFields(state.rules, value);
+                Call.setRules(state.rules);
             }catch(Throwable t){
                 err("Error applying custom rules, proceeding without them.", t);
             }
@@ -282,7 +283,7 @@ public class ServerControl implements ApplicationListener{
             }
         });
 
-        handler.register("reset_path", "", "Reset the pathfinding thread", arg -> {
+        handler.register("reset_path",  "Reset the pathfinding thread", arg -> {
             pathfinder.stop();
             pathfinder.start();
             Log.info("done");
