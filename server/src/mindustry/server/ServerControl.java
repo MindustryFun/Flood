@@ -315,7 +315,7 @@ public class ServerControl implements ApplicationListener{
 
             if(lastTask != null) lastTask.cancel();
 
-            Gamemode preset = Gamemode.survival;
+            Gamemode preset = Gamemode.defense;
 
             if(arg.length > 1){
                 try{
