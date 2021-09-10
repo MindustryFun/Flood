@@ -35,8 +35,11 @@ public class GameState{
     /** Current game state. */
     private State state = State.menu;
 
-    /** TD vars */
-    public float multiplier; // unit health multiplier
+    // TD vars
+    /** Current unit health multiplier */
+    public float multiplier;
+    /** Range multiplier for ammo resupplies. 1 is default range (8.5 tiles). */
+    public final float ammoRange = 5f;
 
     @Nullable
     public Unit boss(){
