@@ -150,7 +150,8 @@ public class TowerDefense {
         "[white]\uF780[]", "[accent]EMP[]\n[accent]The navanax unit[] shoots deadly EMP missiles that take out your turrets & assembly lines for a short period of time.",
         "[white]\uF7F1[]", "[accent]Mono Sacrifice[]\n[accent]Monos[] circle the core and sacrifice into it to heal it when it's low HP. This is the only way to heal the core.",
         "[white]\uF865 & \uF866[]", "[accent]Ammo[]\nUnits require ammo to shoot.\nBe sure to build containers or vaults with ammo, and batteries around the front lines!",
-        "[white]\uE88F[]", "[accent]Chat Commands[]\nYou can hide the right side HUD with \n    [accent] - /hud[]\nYou can hide unit drops with \n    [accent] - /drops[]"
+        "[white]\uE88F[]", "[accent]Chat Commands[]\nYou can hide the right side HUD with \n    [accent] - /hud[]\nYou can hide unit drops with \n    [accent] - /drops[]",
+        "", "[accent]Other balancing changes:[]\n\uF87B Batteries dont explode.\n\uF801 Parallax deals 20x damage but does not pull units.\n\uF858 Fuses deal 0.5x damage.\n\uF7BE Foreshadows deal 8x damage.\n\uF85D & \uF7BD Wave and Tsnunami dont knock back, but their effects last 2.5x longer and slag does 4x damage."
         };
 
         for(int i = 0; i < tutEntries.length / 2; i++){

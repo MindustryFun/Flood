@@ -414,19 +414,22 @@ public class Bullets implements ContentList{
         waterShot = new LiquidBulletType(Liquids.water){{
             knockback = 0f;
             drag = 0.01f;
+            statusDuration = 60 * 32f;
         }};
 
         cryoShot = new LiquidBulletType(Liquids.cryofluid){{
             drag = 0.01f;
+            statusDuration = 60 * 16f;
         }};
 
         slagShot = new LiquidBulletType(Liquids.slag){{
-            damage = 4;
+            damage = 16;
             drag = 0.01f;
         }};
 
         oilShot = new LiquidBulletType(Liquids.oil){{
             drag = 0.01f;
+            statusDuration = 60 * 16f;
         }};
 
         heavyWaterShot = new LiquidBulletType(Liquids.water){{
@@ -437,7 +440,7 @@ public class Bullets implements ContentList{
             orbSize = 4f;
             drag = 0.001f;
             ammoMultiplier = 0.4f;
-            statusDuration = 360f * 4f;
+            statusDuration = 60 * 24f;
             damage = 2f;
         }};
 
@@ -449,7 +452,7 @@ public class Bullets implements ContentList{
             orbSize = 4f;
             drag = 0.001f;
             ammoMultiplier = 0.4f;
-            statusDuration = 160f * 4f;
+            statusDuration = 60 * 12f;
             damage = 2f;
         }};
 
@@ -459,10 +462,9 @@ public class Bullets implements ContentList{
             knockback = 0f;
             puddleSize = 8f;
             orbSize = 4f;
-            damage = 18.75f;
+            damage = 19;
             drag = 0.001f;
             ammoMultiplier = 0.4f;
-            statusDuration = 60f * 8f;
         }};
 
         heavyOilShot = new LiquidBulletType(Liquids.oil){{
@@ -473,7 +475,7 @@ public class Bullets implements ContentList{
             orbSize = 4f;
             drag = 0.001f;
             ammoMultiplier = 0.4f;
-            statusDuration = 60f * 8f;
+            statusDuration = 60 * 12f;
             damage = 0.2f;
         }};
     }

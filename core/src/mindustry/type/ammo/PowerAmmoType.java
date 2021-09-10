@@ -35,8 +35,8 @@ public class PowerAmmoType implements AmmoType{
     }
 
     @Override
-    public void resupply(Unit unit){
-        float range = unit.hitSize + this.range;
+    public void resupply(Unit unit, float rangeMultiplier){
+        float range = unit.hitSize + this.range * rangeMultiplier;
 
         Building build = Units.closestBuilding(unit.team, unit.x, unit.y, range, u -> u.block.consumes.hasPower() && u.block.consumes.getPower().buffered);
 
