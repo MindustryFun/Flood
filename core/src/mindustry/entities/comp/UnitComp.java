@@ -369,7 +369,7 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
             //resupply only at a fixed interval to prevent lag
             if(resupplyTime > 10f){
-                type.ammoType.resupply(self());
+                type.ammoType.resupply(self(), state.ammoRange);
                 resupplyTime = 0f;
             }
         }

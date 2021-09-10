@@ -8,5 +8,5 @@ public interface AmmoType{
     String icon();
     Color color();
     Color barColor();
-    void resupply(Unit unit);
+    void resupply(Unit unit, float rangeMultiplier);
 }

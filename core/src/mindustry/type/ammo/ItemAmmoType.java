@@ -40,11 +40,11 @@ public class ItemAmmoType implements AmmoType{
     }
 
     @Override
-    public void resupply(Unit unit){
+    public void resupply(Unit unit, float rangeMultiplier){
         //do not resupply when it would waste resources
         if(unit.type.ammoCapacity - unit.ammo < ammoPerItem) return;
 
-        float range = unit.hitSize + this.range;
+        float range = unit.hitSize + this.range * rangeMultiplier;
 
         Building build = Units.closestBuilding(unit.team, unit.x, unit.y, range, u -> u.block.allowResupply && u.items.has(item));
 
