@@ -1213,7 +1213,7 @@ public class UnitTypes implements ContentList{
             health = 100;
             engineSize = 1.8f;
             engineOffset = 5.7f;
-            range = 50f;
+            range = 200f;
             isCounted = false;
 
             ammoType = new PowerAmmoType(500);

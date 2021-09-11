@@ -21,12 +21,15 @@ public class MinerAI extends AIController{
 
         if(!(unit.canMine()) || core == null) return;
 
-        circle(core, unit.type.range / 1.8f);
-        if(core != null && core.health < core.maxHealth && core.dst(unit) < tilesize * 2 + unit.type.range / 1.8f) {
+        circle(core, unit.type.range * 1.8f);
+        if(core != null && core.health < core.maxHealth && core.dst(unit) < tilesize * 2 + unit.type.range * 2f) {
+            moveTo(core, 0);
+
             Call.soundAt(Sounds.splash, core.x, core.y, 1f, 1.2f);
             Call.effect(Fx.healBlockFull, core.x, core.y, core.block.size, core.team.color);
             core.heal(unit.health);
-            unit.kill();
+
+            Core.app.post(unit::kill);
         }
         return;
 
