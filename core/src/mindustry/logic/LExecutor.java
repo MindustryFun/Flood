@@ -488,13 +488,22 @@ public class LExecutor{
                     case itemDrop -> {
                         if(ai.itemTimer > 0) return;
 
-                        Building build = exec.building(p1);
-                        int dropped = Math.min(unit.stack.amount, exec.numi(p2));
-                        if(build != null && build.team == unit.team && !(build.block instanceof CoreBlock) && build.isValid() && dropped > 0 && unit.within(build, logicItemTransferRange + build.block.size * tilesize/2f)){
-                            int accepted = build.acceptStack(unit.item(), dropped, unit);
-                            if(accepted > 0){
-                                Call.transferItemTo(unit, unit.item(), accepted, unit.x, unit.y, build);
-                                ai.itemTimer = LogicAI.transferDelay;
+                        //clear item when dropping to @air
+                        if(exec.obj(p1) == Blocks.air){
+                            //only server-side; no need to call anything, as items are synced in snapshots
+                            if(!net.client()){
+                                unit.clearItem();
+                            }
+                            ai.itemTimer = LogicAI.transferDelay;
+                        }else{
+                            Building build = exec.building(p1);
+                            int dropped = Math.min(unit.stack.amount, exec.numi(p2));
+                            if(build != null && build.team == unit.team && build.isValid() && !(build.block instanceof CoreBlock) && dropped > 0 && unit.within(build, logicItemTransferRange + build.block.size * tilesize/2f)){
+                                int accepted = build.acceptStack(unit.item(), dropped, unit);
+                                if(accepted > 0){
+                                    Call.transferItemTo(unit, unit.item(), accepted, unit.x, unit.y, build);
+                                    ai.itemTimer = LogicAI.transferDelay;
+                                }
                             }
                         }
                     }
@@ -707,6 +716,7 @@ public class LExecutor{
                 if((base instanceof Building && timer.get(30f)) || (ai != null && ai.checkTargetTimer(this))){
                     //if any of the targets involve enemies
                     boolean enemies = target1 == RadarTarget.enemy || target2 == RadarTarget.enemy || target3 == RadarTarget.enemy;
+                    boolean allies = target1 == RadarTarget.ally || target2 == RadarTarget.ally || target3 == RadarTarget.ally;
 
                     best = null;
                     bestValue = 0;
@@ -717,6 +727,11 @@ public class LExecutor{
                             if(data.items[i].team != r.team()){
                                 find(r, range, sortDir, data.items[i].team);
                             }
+                        }
+                    }else if(!allies){
+                        Seq<TeamData> data = state.teams.present;
+                        for(int i = 0; i < data.size; i++){
+                            find(r, range, sortDir, data.items[i].team);
                         }
                     }else{
                         find(r, range, sortDir, r.team());

@@ -11,7 +11,6 @@ import arc.util.*;
 import mindustry.ai.*;
 import mindustry.ai.types.*;
 import mindustry.annotations.Annotations.*;
-import mindustry.content.*;
 import mindustry.core.*;
 import mindustry.ctype.*;
 import mindustry.entities.*;
@@ -104,15 +103,18 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
         return type.hasWeapons();
     }
 
+    /** @return speed with boost & floor multipliers factored in. */
     public float speed(){
         float strafePenalty = isGrounded() || !isPlayer() ? 1f : Mathf.lerp(1f, type.strafePenalty, Angles.angleDist(vel().angle(), rotation) / 180f);
+        float boost = Mathf.lerp(1f, type.canBoost ? type.boostMultiplier : 1f, elevation);
         //limit speed to minimum formation speed to preserve formation
-        return (isCommanding() ? minFormationSpeed * 0.98f : type.speed) * strafePenalty;
+        return (isCommanding() ? minFormationSpeed * 0.98f : type.speed) * strafePenalty * boost * floorSpeedMultiplier();
     }
 
-    /** @return speed with boost multipliers factored in. */
+    /** @deprecated use speed() instead */
+    @Deprecated
     public float realSpeed(){
-        return Mathf.lerp(1f, type.canBoost ? type.boostMultiplier : 1f, elevation) * speed() * floorSpeedMultiplier();
+        return speed();
     }
 
     /** Iterates through this unit and everything it is controlling. */
@@ -488,12 +490,13 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
         if(!spawnedByCore){
             Damage.dynamicExplosion(x, y, flammability, explosiveness, power, bounds() / 2f, state.rules.damageExplosions, item().flammability > 1, team, type.deathExplosionEffect);
+        }else{
+            type.deathExplosionEffect.at(x, y, bounds() / 2f / 8f);
         }
 
         float shake = hitSize / 3f;
 
         Effect.scorch(x, y, (int)(hitSize / 5));
-        Fx.explosion.at(this);
         Effect.shake(shake, shake, this);
         type.deathSound.at(this);
 

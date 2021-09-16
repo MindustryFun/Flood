@@ -41,7 +41,7 @@ public class ForceFieldAbility extends Ability{
             if(paramUnit.team() != state.rules.waveTeam || paramUnit.shield <= trait.damage()){
                 paramUnit.shield -= paramField.cooldown * paramField.regen;
 
-                Fx.shieldBreak.at(paramUnit.x, paramUnit.y, paramField.radius, paramUnit.team.color);
+                Fx.shieldBreak.at(paramUnit.x, paramUnit.y, paramField.radius, paramUnit.team.color, paramUnit);
             }
 
             paramUnit.shield -= trait.damage();

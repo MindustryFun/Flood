@@ -32,7 +32,9 @@ public class Fx{
         //lifetime is how many frames it takes to fade out the trail
         e.lifetime = trail.length * 1.4f;
 
-        trail.shorten();
+        if(!state.isPaused()){
+            trail.shorten();
+        }
         trail.drawCap(e.color, e.rotation);
         trail.draw(e.color, e.rotation);
     }),
@@ -360,13 +362,13 @@ public class Fx{
 
         Fill.circle(e.x, e.y, e.fin() * 10);
         Drawf.light(e.x, e.y, e.fin() * 20f, Pal.heal, 0.7f);
-    }),
+    }).followParent(true),
 
     greenLaserChargeSmall = new Effect(40f, 100f, e -> {
         color(Pal.heal);
         stroke(e.fin() * 2f);
         Lines.circle(e.x, e.y, e.fout() * 50f);
-    }),
+    }).followParent(true),
 
     greenCloud = new Effect(80f, e -> {
         color(Pal.heal);
@@ -1876,14 +1878,14 @@ public class Fx{
         color(e.color);
         stroke(3f * e.fout());
         Lines.poly(e.x, e.y, 6, e.rotation + e.fin());
-    }),
+    }).followParent(true),
 
     coreLandDust = new Effect(100f, e -> {
         color(e.color, e.fout(0.1f));
         rand.setSeed(e.id);
         Tmp.v1.trns(e.rotation, e.finpow() * 90f * rand.random(0.2f, 1f));
         Fill.circle(e.x + Tmp.v1.x, e.y + Tmp.v1.y, 8f * rand.random(0.6f, 1f) * e.fout(0.2f));
-    }).layer(Layer.block + 1f),
+    }).layer(Layer.groundUnit + 1f),
 
     unitShieldBreak = new Effect(35, e -> {
         if(!(e.data instanceof Unitc)) return;
