@@ -102,7 +102,7 @@ public class SpawnGroup implements JsonSerializable, Cloneable{
             }
         }
 
-        Events.fire(new EventType.UnitSpawnEvent(unit));
+        Events.fire(new EventType.TDUnitSpawnEvent(unit));
         return unit;
     }
 

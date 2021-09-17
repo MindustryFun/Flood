@@ -224,7 +224,7 @@ public class WaveSpawner{
         unit.apply(StatusEffects.invincible, 60f);
         unit.add();
 
-        Events.fire(new UnitSpawnEvent(unit));
+        Events.fire(new TDUnitSpawnEvent(unit));
         Call.spawnEffect(unit.x, unit.y, unit.rotation, unit.type);
     }
 

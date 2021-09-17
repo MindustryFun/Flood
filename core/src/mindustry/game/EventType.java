@@ -1,6 +1,7 @@
 package mindustry.game;
 
 import arc.util.*;
+import mindustry.content.Blocks;
 import mindustry.core.GameState.*;
 import mindustry.ctype.*;
 import mindustry.entities.units.*;
@@ -9,7 +10,7 @@ import mindustry.net.*;
 import mindustry.net.Packets.*;
 import mindustry.type.*;
 import mindustry.world.*;
-import mindustry.world.blocks.storage.CoreBlock.*;
+import mindustry.world.blocks.storage.CoreBlock;
 
 public class EventType{
 
@@ -301,9 +302,9 @@ public class EventType{
 
     /** Called when a core block is placed/removed or its team is changed. */
     public static class CoreChangeEvent{
-        public CoreBuild core;
+        public Building core;
 
-        public CoreChangeEvent(CoreBuild core){
+        public CoreChangeEvent(Building core){
             this.core = core;
         }
     }
@@ -412,10 +413,10 @@ public class EventType{
     }
 
     /** Called when unit is spawned by any means */
-    public static class UnitSpawnEvent{
+    public static class TDUnitSpawnEvent {
         public final Unit unit;
 
-        public UnitSpawnEvent(Unit unit) {
+        public TDUnitSpawnEvent(Unit unit) {
             this.unit = unit;
         }
     }

@@ -14,8 +14,6 @@ import mindustry.td.TowerDefense;
 import mindustry.type.UnitType;
 import mindustry.world.Tile;
 
-import static mindustry.content.Blocks.payloadPropulsionTower;
-
 public class PayloadVoid extends PayloadBlock{
     public Effect incinerateEffect = Fx.blastExplosion;
     public Sound incinerateSound = Sounds.bang;
@@ -79,7 +77,7 @@ public class PayloadVoid extends PayloadBlock{
                         Timer.schedule(() -> {
                             if(sendTo != null) {
                                 Unit waveUnit = ut.create(Vars.state.rules.waveTeam);
-                                Events.fire(new EventType.UnitSpawnEvent(waveUnit));
+                                Events.fire(new EventType.TDUnitSpawnEvent(waveUnit));
                                 waveUnit.set(sendTo);
                                 waveUnit.add();
                             }

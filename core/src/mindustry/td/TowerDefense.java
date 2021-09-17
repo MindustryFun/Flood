@@ -14,7 +14,8 @@ import mindustry.type.*;
 import mindustry.ui.*;
 import mindustry.world.*;
 import mindustry.world.blocks.payloads.*;
-import mindustry.world.blocks.storage.*;
+import mindustry.world.blocks.storage.CoreBlock;
+import mindustry.world.blocks.storage.StorageBlock;
 
 import java.util.*;
 
@@ -73,7 +74,7 @@ public class TowerDefense {
 
         // Disable enemy attacks, navanax have an exception to allow for their EMP to be fired
         // TODO: Maybe instead of the navanax check below, we can use Call.createBullet to spawn the EMP instead?
-        Events.on(EventType.UnitSpawnEvent.class, e -> {
+        Events.on(EventType.TDUnitSpawnEvent.class, e -> {
             if (e.unit.team() == state.rules.waveTeam && e.unit.type() != UnitTypes.navanax) {
                 e.unit.maxHealth = e.unit.maxHealth * state.multiplier;
                 e.unit.health = e.unit.maxHealth;
